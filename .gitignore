@@ -4,4 +4,4 @@ config.php
 *.log
 vendor/
 *.lock
-
+*.p12
