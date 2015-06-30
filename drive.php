@@ -10,7 +10,7 @@ try{
    $client = new Google_Client(array('use_objects' => true));
 
    $client->setApplicationName($id_project);
-   $client->setClientId($id_client);
+   //$client->setClientId($id_client);
    $key = file_get_contents($p12_file);
 
    $credentials = new Google_Auth_AssertionCredentials(
@@ -37,14 +37,22 @@ try{
 	  $file,
 	  array(
 	    'data' => $data,
-	    //'mimeType' => 'application/octet-stream',
+	    'mimeType' => 'application/octet-stream',
 	    'uploadType' => 'media'
 	  )
 	);
 
-	print_r($createdFile);
-	echo "CREADO !!!";
+	printf("created  %s (%s)\n", $createdFile->getTitle(), $createdFile->getId());
 
+	// Delete files
+   	/*try {
+
+	    $service->files->delete('0Byv0gyCG4iHqc0RVREdXbkpCLWs');
+
+	  } catch (Exception $e) {
+	    print "An error occurred: " . $e->getMessage();
+	  }
+	*/
 	//Give everyone permission to read and write the file
 	$permission = new Google_Service_Drive_Permission();
 	$permission->setRole( 'writer' );
@@ -64,6 +72,8 @@ try{
 	  print "Files:\n";
 	  foreach ($results->getItems() as $file) {
 	    printf("%s (%s)\n", $file->getTitle(), $file->getId());
+	    print "deleting";
+	    $service->files->delete($file->getId());
 	  }
 	}
 

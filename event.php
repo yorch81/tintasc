@@ -10,7 +10,7 @@ try{
    $client = new Google_Client(array('use_objects' => true));
 
    $client->setApplicationName($id_project);
-   $client->setClientId($id_client);
+   //$client->setClientId($id_client);
    $key = file_get_contents($p12_file);
 
    $credentials = new Google_Auth_AssertionCredentials(
@@ -64,7 +64,7 @@ try{
          	echo "No se ha podido insertar el evento";
 	 }
 
-    echo "\n";
+  /*
     // Print the next 10 events on the user's calendar.
    $calendarId = $id_calendar;
 
@@ -105,15 +105,19 @@ try{
    $mycal = $createdReq->getCalendars($id_calendar);  
 
    echo var_dump($mycal);
-
+  */
+   }
+   catch (Google_Auth_Exception $e) {
+        echo "Caught Google_authException:";
+      //print_r($e);
    } 
    catch (Google_ClientException $e) {
         echo "Caught Google_ClientException:";
-		print_r($e);
+		  //print_r($e);
    }
    catch (Google_ServiceException $e) {
         echo "Caught Google_ServiceException:";
-		echo "<pre>".print_r($e,true)."</pre>";
+		  //echo "<pre>".print_r($e,true)."</pre>";
    }
-
+  
 ?>
