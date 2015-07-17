@@ -43,7 +43,7 @@ try{
 	);
 
 	printf("created  %s (%s)\n", $createdFile->getTitle(), $createdFile->getId());
-
+	
 	// Delete files
    	/*try {
 
@@ -54,10 +54,18 @@ try{
 	  }
 	*/
 	//Give everyone permission to read and write the file
-	$permission = new Google_Service_Drive_Permission();
+	
+	/*$permission = new Google_Service_Drive_Permission();
 	$permission->setRole( 'writer' );
 	$permission->setType( 'anyone' );
 	$permission->setValue( 'me' );
+	$service->permissions->insert( $createdFile->getId(), $permission );
+	*/
+
+	$permission = new Google_Service_Drive_Permission();
+	$permission->setRole( 'writer' );
+	$permission->setType( 'user' );
+	$permission->setValue( 'the.yorch@gmail.com' );
 	$service->permissions->insert( $createdFile->getId(), $permission );
 
 	$optParams = array(
@@ -72,10 +80,15 @@ try{
 	  print "Files:\n";
 	  foreach ($results->getItems() as $file) {
 	    printf("%s (%s)\n", $file->getTitle(), $file->getId());
-	    print "deleting";
-	    $service->files->delete($file->getId());
 	  }
 	}
+
+	$about = $service->about->get();
+
+    print "\nCurrent user name: " . $about->getName();
+    print "\nRoot folder ID: " . $about->getRootFolderId();
+    print "\nTotal quota (megabytes): " . (($about->getQuotaBytesTotal()/1024)/1024);
+    print "\nUsed quota (megabytes): " . (($about->getQuotaBytesUsed()/1024)/1024);
 
    } 
    catch (Google_ClientException $e) {

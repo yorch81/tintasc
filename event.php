@@ -9,13 +9,16 @@ try{
 
    $client = new Google_Client(array('use_objects' => true));
 
-   $client->setApplicationName($id_project);
+   $client->setApplicationName(PROJECT_ID);
    //$client->setClientId($id_client);
-   $key = file_get_contents($p12_file);
+   
+   $key = null;
+   if (file_exists (P12_FILE))
+    $key = file_get_contents(P12_FILE);
 
    $credentials = new Google_Auth_AssertionCredentials(
-				$email_developer,
-				array("https://www.googleapis.com/auth/calendar"),
+				DEVELOPER_EMAIL,
+				array("https://www.googleapis.com/auth/calendar", "https://www.googleapis.com/auth/drive.file"),
 				$key,
 				"notasecret"
 				);
@@ -32,24 +35,24 @@ try{
    $event->setColorId("10");
 
    $start = new Google_Service_Calendar_EventDateTime();
-   $start->setDateTime('2015-06-29T10:00:00');
+   $start->setDateTime('2015-07-29T10:00:00');
    $start->setTimeZone('America/Mexico_City');
    $event->setStart($start);
 
    $end = new Google_Service_Calendar_EventDateTime();
-   $end->setDateTime('2015-06-29T11:00:00');
+   $end->setDateTime('2015-07-29T11:00:00');
    $end->setTimeZone('America/Mexico_City');
    $event->setEnd($end);
 
    $new_event = null;
    $new_event_id = "";
 
-   $new_event = $service->events->insert($id_calendar, $event);
+   $new_event = $service->events->insert(CALENDAR_ID, $event);
 
    if($new_event!=null){
 
       $new_event_id= $new_event->getId();
-      $event = $service->events->get($id_calendar, $new_event_id);
+      $event = $service->events->get(CALENDAR_ID, $new_event_id);
 
       if ($event != null) {
 	   echo "<br/>Inserted:";
@@ -108,16 +111,11 @@ try{
   */
    }
    catch (Google_Auth_Exception $e) {
-        echo "Caught Google_authException:";
-      //print_r($e);
+        echo 'Google_Auth_Exception ' . $e->getMessage();
+      //echo var_dump($e);
    } 
-   catch (Google_ClientException $e) {
-        echo "Caught Google_ClientException:";
-		  //print_r($e);
-   }
-   catch (Google_ServiceException $e) {
-        echo "Caught Google_ServiceException:";
-		  //echo "<pre>".print_r($e,true)."</pre>";
+   catch (Google_Service_Exception $e) {
+        echo 'Google_Service_Exception' . $e->getMessage();
    }
   
 ?>
