@@ -1,6 +1,5 @@
 <?php
 require "vendor/autoload.php";
-require 'classes/MyLogin.class.php';
 
 // Init Sessions
 if (session_status() == PHP_SESSION_NONE) {
@@ -11,7 +10,7 @@ if (session_status() == PHP_SESSION_NONE) {
 
 $app = new \Slim\Slim();
 
-$social = MyLogin::getInstance('MyFaceBook', '1492550914370381', 'e4b0f73cb298a5eaaaba124322be48ee', 'http://tintasc.localhost/fb');
+$social = MyLogin::getInstance(MyLogin::FACEBOOK);
 
 // Root
 $app->get(

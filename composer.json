@@ -18,6 +18,7 @@
         "parse/php-sdk" : "1.1.*",
         "monolog/monolog": "1.13.1",
         "facebook/php-sdk-v4" : "4.0.23",
-        "ruudk/twitter-oauth" : "dev-master"
+        "ruudk/twitter-oauth" : "dev-master",
+        "yorch/mylogin" : "dev-master"
     }
 }

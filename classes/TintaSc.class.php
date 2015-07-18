@@ -424,12 +424,9 @@ class TintaSc
 	 * Delete All Images in Google Drive
 	 * 
 	 * @param  string $imgPath Full Path File
-	 * @return string          Google Drive File Id
 	 */
 	public function deleteAllImg()
 	{
-		$new_file_id = "";
-
 		try{
 			$optParams = array('maxResults' => 100,);
 
@@ -450,8 +447,6 @@ class TintaSc
 		{
 			$this->_log->addError($e->getMessage());
 		}
-
-		return $new_file_id;
 	}
 
 	/**
