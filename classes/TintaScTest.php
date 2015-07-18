@@ -47,7 +47,7 @@ class TintaScTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test Method for getInfo
+     * Test General
      */
     public function testGeneral() {
         $expected = "";
