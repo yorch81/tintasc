@@ -11,7 +11,7 @@ if (session_status() == PHP_SESSION_NONE) {
 
 $app = new \Slim\Slim();
 
-$login = MyLogin::getInstance('MyFaceBook');
+$login = MyLogin::getInstance('MyTwitter');
 
 // Root
 $app->get(
@@ -24,9 +24,10 @@ $app->get(
             echo $_SESSION['SOCIAL_ID'] . "\n";
             echo $_SESSION['SOCIAL_NAME'] . "\n";
             echo $_SESSION['SOCIAL_LINK'] . "\n";
+            echo $_SESSION['SOCIAL_IMG'] . "\n";
         }
         else
-            $app->redirect('/fb');
+            $app->redirect('/tw');
     }
 );
 

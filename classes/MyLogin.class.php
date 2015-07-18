@@ -4,7 +4,7 @@ require_once('MySocial.class.php');
 /**
  * MyLogin 
  *
- * MyLogin Class for Manage Social Logins
+ * MyLogin Class for Manage MySocial Logins
  *
  * Copyright 2015 Jorge Alberto Ponce Turrubiates
  *
@@ -38,14 +38,6 @@ class MyLogin
 	private static $_instance;
 
 	/**
-     * LOG Object to manage error log
-     *
-     * @var object $_log Log Object
-     * @access private
-     */
-	private $_log = null;
-
-	/**
      * MySocial Instance
      *
      * @var object $_social MySocial Instance
@@ -53,7 +45,6 @@ class MyLogin
      */
 	private $_social = null;
 
-		
 	/**
 	 * Initialize Wrapper
 	 * 
@@ -103,7 +94,7 @@ class MyLogin
 	{
 		return $this->_social->validate();
 	}
-	
+
 	/**
 	 * If check session create session variables
 	 * 

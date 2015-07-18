@@ -22,7 +22,7 @@ class MyFaceBook
 		    session_start();
 		}
 
-		FacebookSession::setDefaultApplication( '1492550914370381','e4b0f73cb298a5eaaaba124322be48ee' );
+		FacebookSession::setDefaultApplication(  );
 	}
 
 	public function validate()

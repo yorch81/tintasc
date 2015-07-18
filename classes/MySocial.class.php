@@ -97,13 +97,15 @@ abstract class MySocial
 	 * @param  string $id   Social Id
 	 * @param  string $name Social Name
 	 * @param  string $link Social Profile Link
+	 * @param  string $profileImg Profile Image URL
 	 */
-	public function createSession($type, $id, $name, $link)
+	public function createSession($type, $id, $name, $link, $profileImg)
 	{
 		$_SESSION['SOCIAL_TYPE'] = $type;
 		$_SESSION['SOCIAL_ID'] = $id;
 		$_SESSION['SOCIAL_NAME'] = $name;
 		$_SESSION['SOCIAL_LINK'] = $link;
+		$_SESSION['SOCIAL_IMG'] = $profileImg;
 	}
 
 	/**
@@ -176,9 +178,10 @@ class MyFaceBook extends MySocial
         	$fbid = $graphObject->getProperty('id');
         	$fbname = $graphObject->getProperty('name');
         	$fblink = $graphObject->getProperty('link'); 
-            
+            $fbimg = 'https://graph.facebook.com/' . $fbid . '/picture?type=large';
+
             // Create Session Variables
-            $this->createSession('FB', $fbid, $fbname, $fblink);
+            $this->createSession('FB', $fbid, $fbname, $fblink, $fbimg);
 
             $retValue = true;
         } 
@@ -230,8 +233,8 @@ class MyTwitter extends MySocial
 	{
 		$retValue = false;
 
-		if(isset($_REQUEST['oauth_token']) && $_SESSION['token'] == $_REQUEST['oauth_token']) {
-            $tw = new \TwitterOAuth\Api($this->_appKey, $this->_appSecret, $_SESSION['token'] , $_SESSION['token_secret']);
+		if(isset($_REQUEST['oauth_token']) && $_SESSION['token'] == $_REQUEST['oauth_token']){
+			$tw = new \TwitterOAuth\Api($this->_appKey, $this->_appSecret, $_SESSION['token'], $_SESSION['token_secret']);
             $access_token = $tw->getAccessToken($_REQUEST['oauth_verifier']);
 
             if($tw->http_code=='200')
@@ -242,9 +245,10 @@ class MyTwitter extends MySocial
                 $twid   = $_SESSION['request_vars']['user_id'];
                 $twname = $_SESSION['request_vars']['screen_name'];
                 $twlink = 'https://twitter.com/intent/user?user_id=' . $twid;
+                $twImg  = 'https://twitter.com/' . $twname . '/profile_image?size=original';
 
                 // Create Session Variables
-            	$this->createSession('TW', $twid, $twname, $twlink);
+            	$this->createSession('TW', $twid, $twname, $twlink, $twImg);
 
                 unset($_SESSION['token']);
                 unset($_SESSION['token_secret']);
@@ -259,8 +263,8 @@ class MyTwitter extends MySocial
             $tw = new \TwitterOAuth\Api($this->_appKey, $this->_appSecret);
             $request_token = $tw->getRequestToken($this->_cbUrl);
 
-            $_SESSION['token']          = $request_token['oauth_token'];
-            $_SESSION['token_secret']   = $request_token['oauth_token_secret'];
+            $_SESSION['token']        = $request_token['oauth_token'];
+            $_SESSION['token_secret'] = $request_token['oauth_token_secret'];
             
             if($tw->http_code=='200'){
                 $this->_authUrl = $tw->getAuthorizeURL($request_token['oauth_token']);
