@@ -11,15 +11,15 @@ if (session_status() == PHP_SESSION_NONE) {
 
 $app = new \Slim\Slim();
 
-$login = MyLogin::getInstance('MyTwitter');
+$social = MyLogin::getInstance('MyFaceBook', '1492550914370381', 'e4b0f73cb298a5eaaaba124322be48ee', 'http://tintasc.localhost/fb');
 
 // Root
 $app->get(
     '/',
-    function () use ($app, $login) {
+    function () use ($app, $social) {
         echo "Hello TintaSc !!!";
 
-        if ($login->validate()){
+        if ($social->validate()){
             echo $_SESSION['SOCIAL_TYPE'] . "\n";
             echo $_SESSION['SOCIAL_ID'] . "\n";
             echo $_SESSION['SOCIAL_NAME'] . "\n";
@@ -27,17 +27,17 @@ $app->get(
             echo $_SESSION['SOCIAL_IMG'] . "\n";
         }
         else
-            $app->redirect('/tw');
+            $app->redirect('/fb');
     }
 );
 
 $app->get(
     '/fb',
-    function () use ($app, $login) {
-        if ($login->checkSession())
+    function () use ($app, $social) {
+        if ($social->login())
             $app->redirect('/');
         else{
-            $loginUrl = $login->getAuthUrl();
+            $loginUrl = $social->getAuthUrl();
             $app->redirect($loginUrl);
         }
     }
@@ -45,11 +45,11 @@ $app->get(
 
 $app->get(
     '/tw',
-    function () use ($app, $login) {
-        if ($login->checkSession())
+    function () use ($app, $social) {
+        if ($social->login())
             $app->redirect('/');
         else{
-            $loginUrl = $login->getAuthUrl();
+            $loginUrl = $social->getAuthUrl();
             $app->redirect($loginUrl);
         }
     }

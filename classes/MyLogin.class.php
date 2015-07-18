@@ -46,6 +46,12 @@ class MyLogin
 	private $_social = null;
 
 	/**
+	 * Social Types
+	 */
+	const FACEBOOK = 'MyFaceBook';
+	const TWITTER = 'MyTwitter';
+
+	/**
 	 * Initialize Wrapper
 	 * 
 	 * @param string $type      Social Type
@@ -53,7 +59,7 @@ class MyLogin
 	 * @param string $appSecret Facebook Application Secret or Twitter Consumer Secret
 	 * @param string $cbUrl     CallBack URL
 	 */
-	private function __construct($type = 'MyFaceBook', $appKey = '', $appSecret = '', $cbUrl = '')
+	private function __construct($type = self::FACEBOOK, $appKey = '', $appSecret = '', $cbUrl = '')
 	{
 		if(class_exists($type)){
 			$this->_social = new $type($appKey, $appSecret, $cbUrl);
@@ -72,7 +78,7 @@ class MyLogin
 	 * @param string $cbUrl     CallBack URL
 	 * @return MyLogin MyLogin Instance
 	 */
-	public static function getInstance($type = 'MyFaceBook', $appKey = '', $appSecret = '', $cbUrl = '')
+	public static function getInstance($type = self::FACEBOOK, $appKey = '', $appSecret = '', $cbUrl = '')
 	{
 		if(self::$_instance){
 			return self::$_instance;
@@ -96,13 +102,13 @@ class MyLogin
 	}
 
 	/**
-	 * If check session create session variables
+	 * Check Login Social Network Session Variables
 	 * 
 	 * @return boolean
 	 */
-	public function checkSession()
+	public function login()
 	{
-		return $this->_social->checkSession();
+		return $this->_social->login();
 	}
 
 	/**

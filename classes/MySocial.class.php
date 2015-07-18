@@ -11,6 +11,9 @@ use Facebook\Entities\AccessToken;
 use Facebook\HttpClients\FacebookCurlHttpClient;
 use Facebook\HttpClients\FacebookHttpable;
 
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
+
 /**
  * MySocial 
  *
@@ -72,6 +75,26 @@ abstract class MySocial
 	protected $_authUrl = null;
 
 	/**
+     * LOG Object to manage error log
+     *
+     * @var object $_log Log Object
+     * @access private
+     */
+	protected $_log = null;
+
+	/**
+	 * Initialize Log file
+	 */
+	public function initlog()
+	{
+		// Create Log
+		$logName = 'mylogin_log-' . date("Y-m-d") . '.log';
+
+		$this->_log = new Logger('MyLogin');
+		$this->_log->pushHandler(new StreamHandler($logName, Logger::ERROR));
+	}
+
+	/**
 	 * Validate if Exists FaceBook or Twitter Id in Session
 	 * 
 	 * @return boolean
@@ -109,11 +132,11 @@ abstract class MySocial
 	}
 
 	/**
-	 * Check Social Session Variables
+	 * Check Login Social Session Variables
 	 * 
 	 * @return boolean
 	 */
-	public abstract function checkSession();
+	public abstract function login();
 }
 
 /**
@@ -142,51 +165,64 @@ class MyFaceBook extends MySocial
 		    session_start();
 		}
 
+		// Init Log
+		$this->initlog();
+
 		$this->_appKey = $appKey;
 		$this->_appSecret = $appSecret;
 		$this->_cbUrl = $cbUrl;
 
-		FacebookSession::setDefaultApplication($this->_appKey, $this->_appSecret);
+		try{
+			FacebookSession::setDefaultApplication($this->_appKey, $this->_appSecret);
+		}
+		catch(Exception $e){
+        	$this->_log->addError($e->getMessage());
+        }
 	}
 
 	/**
-	 * If check session create session variables
+	 * Check Login Facebook Session Variables
 	 * 
 	 * @return boolean
 	 */
-	public function checkSession()
+	public function login()
 	{
 		$retValue = false;
 
-		$helper = new FacebookRedirectLoginHelper($this->_cbUrl);
+		try{
+			$helper = new FacebookRedirectLoginHelper($this->_cbUrl);
 
-        try{
-        	$session = $helper->getSessionFromRedirect();
-        }
-        catch(FacebookRequestException $e){
-          // When Facebook returns an error
-        }
-        catch(Exception $e){
-          // When validation fails or other local issues
-        }
+	        try{
+	        	$session = $helper->getSessionFromRedirect();
+	        }
+	        catch(FacebookRequestException $e){
+	        	$this->_log->addError($e->getMessage());
+	        }
+	        catch(Exception $e){
+	        	$this->_log->addError($e->getMessage());
+	        }
 
-        if (isset($session)){
-        	$request = new FacebookRequest( $session, 'GET', '/me?fields=id,name,link' );
-        	$response = $request->execute();
-        	$graphObject = $response->getGraphObject();
-        	
-        	$fbid = $graphObject->getProperty('id');
-        	$fbname = $graphObject->getProperty('name');
-        	$fblink = $graphObject->getProperty('link'); 
-            $fbimg = 'https://graph.facebook.com/' . $fbid . '/picture?type=large';
+	        if (isset($session)){
+	        	$request = new FacebookRequest( $session, 'GET', '/me?fields=id,name,link' );
+	        	$response = $request->execute();
+	        	$graphObject = $response->getGraphObject();
+	        	
+	        	$fbid = $graphObject->getProperty('id');
+	        	$fbname = $graphObject->getProperty('name');
+	        	$fblink = $graphObject->getProperty('link'); 
+	            $fbimg = 'https://graph.facebook.com/' . $fbid . '/picture?type=large';
 
-            // Create Session Variables
-            $this->createSession('FB', $fbid, $fbname, $fblink, $fbimg);
+	            // Create Session Variables
+	            $this->createSession('FB', $fbid, $fbname, $fblink, $fbimg);
 
-            $retValue = true;
-        } 
-        else{
-        	$this->_authUrl = $helper->getLoginUrl();
+	            $retValue = true;
+	        } 
+	        else{
+	        	$this->_authUrl = $helper->getLoginUrl();
+	        }
+		}
+		catch(Exception $e){
+        	$this->_log->addError($e->getMessage());
         }
 
 		return $retValue;
@@ -219,59 +255,67 @@ class MyTwitter extends MySocial
 		    session_start();
 		}
 
+		// Init Log
+		$this->initlog();
+		
 		$this->_appKey = $appKey;
 		$this->_appSecret = $appSecret;
 		$this->_cbUrl = $cbUrl;
 	}
 
 	/**
-	 * If check session create session variables
+	 * Check Login Twitter Session Variables
 	 * 
 	 * @return boolean
 	 */
-	public function checkSession()
+	public function login()
 	{
 		$retValue = false;
 
-		if(isset($_REQUEST['oauth_token']) && $_SESSION['token'] == $_REQUEST['oauth_token']){
-			$tw = new \TwitterOAuth\Api($this->_appKey, $this->_appSecret, $_SESSION['token'], $_SESSION['token_secret']);
-            $access_token = $tw->getAccessToken($_REQUEST['oauth_verifier']);
+		try{
+			if(isset($_REQUEST['oauth_token']) && $_SESSION['token'] == $_REQUEST['oauth_token']){
+				$tw = new \TwitterOAuth\Api($this->_appKey, $this->_appSecret, $_SESSION['token'], $_SESSION['token_secret']);
+	            $access_token = $tw->getAccessToken($_REQUEST['oauth_verifier']);
 
-            if($tw->http_code=='200')
-            {
-                $_SESSION['status'] = 'verified';
-                $_SESSION['request_vars'] = $access_token;
-                
-                $twid   = $_SESSION['request_vars']['user_id'];
-                $twname = $_SESSION['request_vars']['screen_name'];
-                $twlink = 'https://twitter.com/intent/user?user_id=' . $twid;
-                $twImg  = 'https://twitter.com/' . $twname . '/profile_image?size=original';
+	            if($tw->http_code=='200')
+	            {
+	                $_SESSION['status'] = 'verified';
+	                $_SESSION['request_vars'] = $access_token;
+	                
+	                $twid   = $_SESSION['request_vars']['user_id'];
+	                $twname = $_SESSION['request_vars']['screen_name'];
+	                $twlink = 'https://twitter.com/intent/user?user_id=' . $twid;
+	                $twImg  = 'https://twitter.com/' . $twname . '/profile_image?size=original';
 
-                // Create Session Variables
-            	$this->createSession('TW', $twid, $twname, $twlink, $twImg);
+	                // Create Session Variables
+	            	$this->createSession('TW', $twid, $twname, $twlink, $twImg);
 
-                unset($_SESSION['token']);
-                unset($_SESSION['token_secret']);
-                
-                $retValue = true;
-            }
-            else{
-                die("error, try again later!");
-            }
-        }
-        else{
-            $tw = new \TwitterOAuth\Api($this->_appKey, $this->_appSecret);
-            $request_token = $tw->getRequestToken($this->_cbUrl);
+	                unset($_SESSION['token']);
+	                unset($_SESSION['token_secret']);
+	                
+	                $retValue = true;
+	            }
+	            else{
+	            	$this->_log->addError($e->getMessage("Twitter error, try again later!"));
+	            }
+	        }
+	        else{
+	            $tw = new \TwitterOAuth\Api($this->_appKey, $this->_appSecret);
+	            $request_token = $tw->getRequestToken($this->_cbUrl);
 
-            $_SESSION['token']        = $request_token['oauth_token'];
-            $_SESSION['token_secret'] = $request_token['oauth_token_secret'];
-            
-            if($tw->http_code=='200'){
-                $this->_authUrl = $tw->getAuthorizeURL($request_token['oauth_token']);
-            }
-            else{
-                die("error connecting to twitter! try again later!");
-            }
+	            $_SESSION['token']        = $request_token['oauth_token'];
+	            $_SESSION['token_secret'] = $request_token['oauth_token_secret'];
+	            
+	            if($tw->http_code=='200'){
+	                $this->_authUrl = $tw->getAuthorizeURL($request_token['oauth_token']);
+	            }
+	            else{
+	            	$this->_log->addError($e->getMessage("error connecting to Twitter! try again later!"));
+	            }
+	        }
+		}
+		catch(Exception $e){
+        	$this->_log->addError($e->getMessage());
         }
 
 		return $retValue;
