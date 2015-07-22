@@ -77,6 +77,12 @@ class TintaSc
 	const APP_SITE = 'http://tintaestudio.mx/tintasc/';
 
 	/**
+	 * Date Types
+	 */
+	const DESING = 1;
+	const TATOO  = 2;
+
+	/**
      * Google Client Instance
      * @var object $_gClient Google Client Instance
      *
@@ -361,6 +367,7 @@ class TintaSc
 			$description = self::APP_SITE . $event_key;
 
 			$event->setDescription($description);
+			//$event->setSummary($description);
 
 			$updatedEvent = $this->_gCalendar->events->update(CALENDAR_ID, $event->getId(), $event);
 		}
@@ -500,6 +507,93 @@ class TintaSc
 		}
 
 		return $retValue;
+	}
+
+	/**
+	 * Gets Tinta Data
+	 * 
+	 * @param  string $eventKey Parse Event key
+	 * @return array            Json Data
+	 */
+	public function getInfo($eventKey)
+	{
+		// Information
+		$_info = array('FBID' => '',
+					   'FBURL' => '',
+					   'FBPICTURE' => '',
+					   'EVENTID'=> '',
+					   'IMAGES' => 0,
+					   'IMAGESLNK' => array());
+
+		$query = new ParseQuery("TintaEvent");
+
+		try {
+			// General Info
+			$pEvent = $query->get($eventKey);
+
+			$_info['FBID'] = $pEvent->get("FBID");
+			$_info['FBURL'] = $this->getProfileUrl($pEvent->get("FBID"));
+			$_info['FBPICTURE'] = $this->getProfileImg($pEvent->get("FBID"), 'normal');
+
+			$_info['EVENTID'] = $pEvent->get("EVENTID");
+
+			// Google Drive Images
+			$qImages = new ParseQuery("TintaImage");
+			$qImages->equalTo("EVENTID", $eventKey);
+			$results = $qImages->find();
+
+			$total = count($results);
+
+			$_info['IMAGES'] = $total;
+
+			if ($total > 0){
+				$imgLinks = array();
+
+				for ($i = 0; $i < $total; $i++){
+					$pImg = $results[$i];
+					$imgLinks[] = $this->getGFileUrl($pImg->get("GIMAGEID"));
+				}
+
+				$_info['IMAGESLNK'] = $imgLinks;
+			}
+		} catch (ParseException $ex) {
+			$this->_log->addError($e->getMessage());
+		}
+
+		return $_info;
+	}
+
+	/**
+	 * Gets Profile URL of a Facebook Id
+	 * 
+	 * @param  string $fbId Facebook Id
+	 * @return string       Facebook Url
+	 */
+	public function getProfileUrl($fbId)
+	{
+		return "https://www.facebook.com/app_scoped_user_id/" . $fbId;
+	}
+
+	/**
+	 * Gets Profile Image of a Facebook Id
+	 * 
+	 * @param  string $fbid    Facebook Id
+	 * @param  string $imgType Image Type (small, normal, album, large, square)
+	 * @return string          Image Url
+	 */
+	public function getProfileImg($fbid, $imgType)
+	{
+		return "https://graph.facebook.com/" . $fbid . "/picture?type=" . $imgType;
+	}
+
+	/**
+	 * Gets Url of Google Drive File Id
+	 * @param  string $gFileId Google Drive File Id
+	 * @return string          Image Url
+	 */
+	public function getGFileUrl($gFileId)
+	{
+		return "https://drive.google.com/uc?export=download&id=" . $gFileId;
 	}
 }
 ?>
