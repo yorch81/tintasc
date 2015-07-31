@@ -1,6 +1,4 @@
 <?php
-require_once('config.php');
-
 use Parse\ParseObject;
 use Parse\ParseQuery;
 use Parse\ParseACL;

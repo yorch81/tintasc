@@ -1,5 +1,7 @@
 <?php
 require "vendor/autoload.php";
+require "config.php";
+require "classes/TintaSc.class.php";
 
 // Init Sessions
 if (session_status() == PHP_SESSION_NONE) {
@@ -17,11 +19,7 @@ $app->get(
     '/',
     function () use ($app, $fb) {
         if ($fb->validate()){
-            echo $_SESSION['SOCIAL_TYPE'] . "\n";
-            echo $_SESSION['SOCIAL_ID'] . "\n";
-            echo $_SESSION['SOCIAL_NAME'] . "\n";
-            echo $_SESSION['SOCIAL_LINK'] . "\n";
-            echo $_SESSION['SOCIAL_IMG'] . "\n";
+            $app->render('vw_index.php');
         }
         else
             $app->redirect('/fb');
@@ -47,6 +45,41 @@ $app->get(
         session_destroy();
         
         $app->redirect('http://tintaestudio.mx/');
+    }
+);
+
+$app->post(
+    '/check',
+    function () use ($app, $dicDb) {
+        $ini = $app->request->post('ini');
+        $fin = $app->request->post('fin');
+    
+        $ini = $ini . '-05:00';
+        $fin = $fin . '-05:00';
+
+        $tinta = TintaSc::getInstance();
+
+        try{
+            
+            $event_id = $tinta->addEvent(TintaSc::TATOO, $ini, $fin);
+
+            if ($event_id != ''){
+                $eventKey = $tinta->saveEvent("10153397832791897", $event_id);
+                
+                $tinta->addEventUrl($event_id, $eventKey);
+            }
+
+            $app->response()->status(200);
+
+            echo $event_id;
+        }
+        catch (ResourceNotFoundException $e) {
+            $app->response()->status(404);
+        } 
+        catch (Exception $e) {
+            $app->response()->status(400);
+            $app->response()->header('X-Status-Reason', $e->getMessage());
+        }
     }
 );
 
