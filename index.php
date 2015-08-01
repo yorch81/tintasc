@@ -12,7 +12,7 @@ if (session_status() == PHP_SESSION_NONE) {
 
 $app = new \Slim\Slim();
 
-$fb = MyLogin::getInstance(MyLogin::FACEBOOK, '1492550914370381', 'e4b0f73cb298a5eaaaba124322be48ee', 'http://tintasc.localhost/fb');
+$fb = MyLogin::getInstance(MyLogin::FACEBOOK, APP_KEY, APP_SECRET, CALLBACK);
 
 // TintaSc
 $app->get(
@@ -43,30 +43,44 @@ $app->get(
     '/logout',
     function () use ($app, $fb) {
         session_destroy();
-        
+
         $app->redirect('http://tintaestudio.mx/');
     }
 );
 
+// Create Date in Google Calendar
 $app->post(
-    '/check',
-    function () use ($app, $dicDb) {
-        $ini = $app->request->post('ini');
-        $fin = $app->request->post('fin');
-    
-        $ini = $ini . '-05:00';
-        $fin = $fin . '-05:00';
+    '/calendar',
+    function () use ($app) {        
+        $start = $app->request->post('start');
+        $hours = (int) $app->request->post('hours');
+        $type = (int) $app->request->post('type');
+        $comments = $app->request->post('comments');
 
         $tinta = TintaSc::getInstance();
 
-        try{
-            
-            $event_id = $tinta->addEvent(TintaSc::TATOO, $ini, $fin);
+        // Add Locale mx
+        $start = $start . '-05:00';
 
-            if ($event_id != ''){
-                $eventKey = $tinta->saveEvent("10153397832791897", $event_id);
-                
-                $tinta->addEventUrl($event_id, $eventKey);
+        try{
+            $event_id = '';
+
+            if (! isset($_SESSION['EVENT_KEY'])){
+                $end = $tinta->addHours($start,$hours);
+
+                $event_id = $tinta->addEvent($type, $start, $end, $comments);
+
+                $fbId = $_SESSION['SOCIAL_ID'];
+                $fbName = $_SESSION['SOCIAL_NAME'];
+
+                if ($event_id != ''){
+                    $eventKey = $tinta->saveEvent($fbId, $fbName, $event_id);
+                    
+                    if ($eventKey != '')
+                        $_SESSION['EVENT_KEY'] = $eventKey;
+
+                    $tinta->addEventUrl($event_id, $eventKey);
+                }
             }
 
             $app->response()->status(200);
@@ -80,6 +94,52 @@ $app->post(
             $app->response()->status(400);
             $app->response()->header('X-Status-Reason', $e->getMessage());
         }
+    }
+);
+
+// Upload Images Google Drive
+$app->post(
+    '/upload',
+    function () use ($app) {
+        try{
+            if (isset($_SESSION['EVENT_KEY'])){
+               if (!empty($_FILES)){
+                    $tempFile = $_FILES['file']['tmp_name'];
+
+                    // Add Google Drive
+                    $tinta = TintaSc::getInstance();
+
+                    $gFileId = $tinta->uploadImg($tempFile);
+                    $eventKey = $_SESSION['EVENT_KEY'];
+                    $tinta->saveEventImg($eventKey, $gFileId);
+                    
+                    $app->response()->status(200);
+                    echo "OK";
+                } 
+            }
+            else{
+                $app->response()->status(400);
+                echo "BAD";
+            }
+        }
+        catch (ResourceNotFoundException $e) {
+            $app->response()->status(404);
+        } 
+        catch (Exception $e) {
+            $app->response()->status(400);
+            $app->response()->header('X-Status-Reason', $e->getMessage());
+        }
+    }
+);
+
+// View Dates
+$app->get("/dates/:eventkey", 
+    function ($eventkey) use ($app) {
+        $tinta = TintaSc::getInstance();
+
+        $app->view()->setData(array('info' => $tinta->getInfo($eventkey)));
+        
+        $app->render('vw_dates.php');
     }
 );
 

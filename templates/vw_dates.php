@@ -16,18 +16,11 @@
     <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>-->
 
-    <link rel="stylesheet" href="./bootstrap-3.3.5/css/bootstrap.min.css">
-    <script src="./bootstrap-3.3.5/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/bootstrap-3.3.5/css/bootstrap.min.css">
+    <script src="/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 
 	  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.js"></script>
-	
 	  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
-    <link href="http://cdn.3utilities.com/bootstrap-datetimepicker/css/bootstrap-datetimepicker.css" rel="stylesheet">
-    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.js"></script>
-    <script src="http://cdn.3utilities.com/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js"></script>
-
-    <link href="dropzone/css/dropzone.css" type="text/css" rel="stylesheet" />
-    <script src="dropzone/js/dropzone.min.js"></script> 
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -97,94 +90,39 @@
         <center><h2>Citas</h2></center>      
         
         <div class="container">
-              
-            <div class="form-group">
-              <label for="cmbType">Tipo de Cita:</label>
-              <select class="form-control" id="cmbType">
-                <option value ="1" selected>Diseño</option>
-                <option value ="2">Tatuaje</option>
-              </select>
-            </div>  
-
-            <div class="form-group">
-            	<label for="txtStart">Iniciando:</label>
-                <div class='input-group date' id='datetimepicker1'>
-                    <input type='text' class="form-control" id='txtStart' />
-                    <span class="input-group-addon">
-                        <span class="glyphicon glyphicon-calendar"></span>
-                    </span>
-                </div>
-            </div>
+            <label>FBNAME</label>
+            <?php 
+              echo $data['info']['FBNAME'];
+            ?>
 	        
-            <div class="form-group">
-              <label for="cmbHours">Horas:</label>
-              <select class="form-control" id="cmbHours">
-                <option value ="1" selected>1</option>
-                <option value ="2">2</option>
-                <option value ="3">3</option>
-                <option value ="4">4</option>
-                <option value ="5">5</option>
-                <option value ="6">6</option>
-              </select>
+            <br><br>
+            <label>FB Profile</label>
+            <a href="<?php echo $data['info']['FBURL']; ?>">
+              <img src="<?php echo $data['info']['FBPICTURE']; ?>" class="img-rounded"  width="100" height="100">
+            </a>
+
+            <br><br>
+            <label>Diseños</label>
+            <div class="row">
+            <?php 
+              $totalImg = $data['info']['IMAGES'];
+
+              if ($totalImg > 0){
+                for ($i=0; $i<$totalImg; $i++){
+                  ?>
+                  <div class="col-md-6">
+                    <a href="<?php echo $data['info']['IMAGESLNK'][$i]; ?>" class="thumbnail">
+                      <img src="<?php echo $data['info']['IMAGESLNK'][$i]; ?>" alt="Design" style="width:200px;height:250px">
+                    </a>
+                  </div>
+            <?php
+                }
+              }
+            ?>
             </div>
 
-            <div class="form-group">
-              <label for="txtComments">Comentarios:</label>
-              <textarea class="form-control" rows="3" id="txtComments"></textarea>
-            </div> 
-	          
-        	<button id="btn_calendar" class="btn btn-lg btn-primary" type="submit">Agendar</button>
-	        
-          <br><br>
-
-	        <div class="form-group">
-            <label for="imgUploader">Subir Diseños:</label>
-            <form action="/upload" class="dropzone" id="imgUploader" >
-            <!--Nothing required in form every thing will be automatically handled by dropzone.js-->
-            </form>
-          </div>
-
-	        <script type="text/javascript">
-	            $(function () {
-	                $('#datetimepicker1').datetimepicker({
-	                    locale: 'es',
-	                    format: 'YYYY-MM-DDTHH:mm:00.000'
-	                });
-	                
-                  $("#btn_credits").click(function() {
-                      $('#window-credits').modal('toggle');
-                  });
-
-                  $("#btn_calendar").click(function() {
-                      start = $('#txtStart').val()
-
-                      if (start.length > 5){
-                        $.post('/calendar', 
-                            {start:start, hours:$('#cmbHours').val(), type:$('#cmbType').val(), comments:$('#txtComments').val()},
-                            function(response) {
-                              if (response == ''){
-                                 bootbox.alert("Por el momento ese horario se encuentra ocupado, intente con otra Fecha");
-                              }
-                              else{
-                                bootbox.alert("Cita Agendada !!! Gracias !!!");
-                                $("#btn_calendar").prop('disabled', true);
-                              }
-                        }).error(
-                            function(){
-                                console.log('Error executing Post');
-                            }
-                        );
-                      }
-                      else{
-                        bootbox.alert("Debe Seleccionar una Fecha");
-                        $('#txtStart').focus();
-                      }                      
-                  });
-	            });
-	        </script>
-    </div>
-    
-    
+        </div>
+      </div>
     </div>
 
       <!-- Static Modal Credits -->

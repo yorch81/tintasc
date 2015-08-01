@@ -72,7 +72,7 @@ class TintaSc
 	/**
 	 * Application URL
 	 */
-	const APP_SITE = 'http://tintaestudio.mx/tintasc/';
+	const APP_SITE = 'http://tintasc.localhost.192.168.0.110.xip.io/';
 
 	/**
 	 * Date Types
@@ -171,6 +171,25 @@ class TintaSc
 	}
 
 	/**
+	 * Add Hours to Google Date Format
+	 * 
+	 * @param string $gDate Google Date
+	 * @param int    $hours Hours to Added
+	 * @return string
+	 */
+	public function addHours($gDate, $hours)
+	{
+		$myTime = strtotime($gDate);
+		$myTime = $myTime + (3600 * $hours);
+
+		$myDate = date('Y-m-d H:i:s', $myTime);
+
+		$myDate = substr_replace($myDate, 'T', 10, 1);
+
+		return $myDate . '-05:00';
+	}
+
+	/**
 	 * Gets Type Description
 	 * 
 	 * @param  int    $type     1 - DESING 2 - TATOO
@@ -208,16 +227,17 @@ class TintaSc
 	 * @param int    $type      1 - DESING 2 - TATOO
 	 * @param string $startDate Start DateTime ('2015-07-30T10:00:00-05:00')
 	 * @param string $endDate   End DateTime
+	 * @param string $comments  Comments of the date
 	 * @return string           Google Event Id
 	 */
-	public function addEvent($type, $startDate, $endDate)
+	public function addEvent($type, $startDate, $endDate, $comments)
 	{
 		$new_event_id = "";
 
 		try{
 			if ($this->checkAvailability($startDate, $endDate)){
 				$event = new Google_Service_Calendar_Event;
-				$event->setDescription('');
+				$event->setDescription($comments);
 			   	$event->setSummary($this->getTypeDescription($type));
 			   	$event->setLocation(self::ADDRESS);
 			   	$event->setColorId($this->getColor($type));
@@ -362,10 +382,10 @@ class TintaSc
 		try{
 			$event = $this->_gCalendar->events->get(CALENDAR_ID, $event_id);
 
-			$description = self::APP_SITE . $event_key;
+			$description = self::APP_SITE . "dates/" .$event_key;
 
-			$event->setDescription($description);
-			//$event->setSummary($description);
+			//$event->setDescription($description);
+			$event->setSummary($description);
 
 			$updatedEvent = $this->_gCalendar->events->update(CALENDAR_ID, $event->getId(), $event);
 		}
@@ -458,15 +478,17 @@ class TintaSc
 	 * Save Event in Parse
 	 * 
 	 * @param  string $fbId    Facebook Id
+	 * @param  string $fbName  Facebook Name
 	 * @param  string $eventId Google Event Id
 	 * @return string          Parse Key
 	 */
-	public function saveEvent($fbId, $eventId)
+	public function saveEvent($fbId, $fbName, $eventId)
 	{
 		$new_event_id = "";
 
 		$pEvent = new ParseObject("TintaEvent");
 		$pEvent->set("FBID", $fbId);
+		$pEvent->set("FBNAME", $fbName);
 		$pEvent->set("EVENTID", $eventId);
 
 		try {
@@ -517,6 +539,7 @@ class TintaSc
 	{
 		// Information
 		$_info = array('FBID' => '',
+					   'FBNAME' => '',
 					   'FBURL' => '',
 					   'FBPICTURE' => '',
 					   'EVENTID'=> '',
@@ -530,6 +553,7 @@ class TintaSc
 			$pEvent = $query->get($eventKey);
 
 			$_info['FBID'] = $pEvent->get("FBID");
+			$_info['FBNAME'] = $pEvent->get("FBNAME");
 			$_info['FBURL'] = $this->getProfileUrl($pEvent->get("FBID"));
 			$_info['FBPICTURE'] = $this->getProfileImg($pEvent->get("FBID"), 'normal');
 
