@@ -7,7 +7,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <link rel="shortcut icon" type="image/x-icon" href="./img/tinta.ico">
+    <link rel="shortcut icon" type="image/x-icon" href="/img/tinta.ico">
 
     <title>TintaSc</title>
 
@@ -16,8 +16,8 @@
     <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>-->
 
-    <link rel="stylesheet" href="./bootstrap-3.3.5/css/bootstrap.min.css">
-    <script src="./bootstrap-3.3.5/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/bootstrap-3.3.5/css/bootstrap.min.css">
+    <script src="/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 
 	  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.js"></script>
 	
@@ -138,10 +138,12 @@
           <br><br>
 
 	        <div class="form-group">
-            <label for="imgUploader">Subir Diseños:</label>
-            <form action="/upload" class="dropzone" id="imgUploader" >
-            <!--Nothing required in form every thing will be automatically handled by dropzone.js-->
-            </form>
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+              <label for="imgUploader">Subir Diseños:</label>
+              <form action="/upload" class="dropzone" id="imgUploader" >
+              <!--Nothing required in form every thing will be automatically handled by dropzone.js-->
+              </form>
+            </div>
           </div>
 
 	        <script type="text/javascript">
@@ -199,7 +201,7 @@
                   <div class="modal-body">
                       <center>
                           <p><h3>Jorge Alberto Ponce Turrubiates</h3></p>
-                          <p><h5><a href="mailto:the.yorch@gmail.com<">the.yorch@gmail.com</a></h5></p>
+                          <p><h5><a href="mailto:the.yorch@gmail.com">the.yorch@gmail.com</a></h5></p>
                           <p><h5><a href="http://the-yorch.blogspot.mx/">Blog</a></h5></p>
                           <p><h5><a href="https://bitbucket.org/yorch81">BitBucket</a></h5></p>
                           <p><h5><a href="https://github.com/yorch81">GitHub</a></h5></p>

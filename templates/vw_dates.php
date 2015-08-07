@@ -7,7 +7,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <link rel="shortcut icon" type="image/x-icon" href="./img/tinta.ico">
+    <link rel="shortcut icon" type="image/x-icon" href="/img/tinta.ico">
 
     <title>TintaSc</title>
 
@@ -110,7 +110,7 @@
               if ($totalImg > 0){
                 for ($i=0; $i<$totalImg; $i++){
                   ?>
-                  <div class="col-md-6">
+                  <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
                     <a href="<?php echo $data['info']['IMAGESLNK'][$i]; ?>" class="thumbnail">
                       <img src="<?php echo $data['info']['IMAGESLNK'][$i]; ?>" alt="Design" style="width:200px;height:250px">
                     </a>

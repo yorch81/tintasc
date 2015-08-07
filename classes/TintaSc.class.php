@@ -72,7 +72,7 @@ class TintaSc
 	/**
 	 * Application URL
 	 */
-	const APP_SITE = 'http://tintasc.localhost.192.168.0.110.xip.io/';
+	const APP_SITE = 'http://tintasc.localhost.192.168.1.3.xip.io/';
 
 	/**
 	 * Date Types
@@ -344,7 +344,7 @@ class TintaSc
 								'timeZone' => self::TIME_ZONE);
 
 			$results = $this->_gCalendar->events->listEvents(CALENDAR_ID, $optParams);
-
+			//return $results;
 			if (count($results->getItems()) > 0){
 				foreach ($results->getItems() as $event) {
 					$start = $event->start->dateTime;

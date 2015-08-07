@@ -3,6 +3,9 @@ require "vendor/autoload.php";
 require "config.php";
 require "classes/TintaSc.class.php";
 
+// TIme Zone
+date_default_timezone_set('America/Mexico_City');
+
 // Init Sessions
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
