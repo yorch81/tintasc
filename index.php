@@ -46,7 +46,7 @@ $app->get(
     '/logout',
     function () use ($app, $fb) {
         session_destroy();
-
+        
         $app->redirect('http://tintaestudio.mx/');
     }
 );
@@ -108,6 +108,9 @@ $app->post(
             if (isset($_SESSION['EVENT_KEY'])){
                if (!empty($_FILES)){
                     $tempFile = $_FILES['file']['tmp_name'];
+
+                    echo $tempFile;
+                    echo $_SESSION['EVENT_KEY'];
 
                     // Add Google Drive
                     $tinta = TintaSc::getInstance();

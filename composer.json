@@ -14,11 +14,11 @@
     "require": {
     	"php": ">=5.4.0",
         "slim/slim": "2.*",
-        "google/apiclient": "1.*",
-        "parse/php-sdk" : "1.1.*",
+        "google/apiclient": "1.1.4",
         "monolog/monolog": "1.13.1",
         "facebook/php-sdk-v4" : "4.0.23",
         "ruudk/twitter-oauth" : "dev-master",
-        "yorch/mylogin" : "dev-master"
+        "yorch/mylogin" : "dev-master",
+        "yorch/v3sdk" : "dev-master"
     }
 }

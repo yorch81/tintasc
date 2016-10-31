@@ -1,16 +1,4 @@
 <?php
-use Parse\ParseObject;
-use Parse\ParseQuery;
-use Parse\ParseACL;
-use Parse\ParsePush;
-use Parse\ParseUser;
-use Parse\ParseInstallation;
-use Parse\ParseException;
-use Parse\ParseAnalytics;
-use Parse\ParseFile;
-use Parse\ParseCloud;
-use Parse\ParseClient;
-
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 
@@ -18,7 +6,7 @@ use Monolog\Handler\StreamHandler;
  * TintaSc 
  *
  * TintaSc Class for Create Events in Google Calendar, upload images to Google Drive 
- * and save operations in Parse.
+ * and save operations in V3ctor WareHouse.
  *
  * Copyright 2015 Jorge Alberto Ponce Turrubiates
  *
@@ -72,7 +60,7 @@ class TintaSc
 	/**
 	 * Application URL
 	 */
-	const APP_SITE = 'http://tintasc.localhost.192.168.1.3.xip.io/';
+	const APP_SITE = APP_URL;
 
 	/**
 	 * Date Types
@@ -105,10 +93,18 @@ class TintaSc
 	private $_gDrive;
 	
 	/**
+	 * V3ctor WareHouse SDK
+	 * @var V3Sdk
+	 */
+	private $_v3;
+	/**
 	 * Initialize TintaScs
 	 */
 	private function __construct()
 	{
+		// V3ctor WareHouse SDK
+		$this->_v3 = V3Sdk::getInstance(V3_URL, V3_KEY);
+
 		// Create Log
 		$logName = 'tintasc_log-' . date("Y-m-d") . '.log';
 
@@ -143,9 +139,6 @@ class TintaSc
 
 			// Init Google Drive
 			$this->_gDrive = new Google_Service_Drive($this->_gClient);
-
-			//Init ParseClient
-			ParseClient::initialize(PARSE_ID, REST_KEY, MASTER_KEY);
 		}
 		catch (Exception $e) {
 	        $this->_log->addError($e->getMessage());
@@ -486,6 +479,20 @@ class TintaSc
 	{
 		$new_event_id = "";
 
+		$data = array('FBID' => $fbId, 'FBNAME' => $fbName, 'EVENTID' => $eventId);
+
+		$result = $this->_v3->newObject('TintaEvent', $data);
+
+		$new_event_id = V3Sdk::getId($result['_id']);
+
+		return $new_event_id;
+	}
+
+	/*
+	public function saveEvent($fbId, $fbName, $eventId)
+	{
+		$new_event_id = "";
+
 		$pEvent = new ParseObject("TintaEvent");
 		$pEvent->set("FBID", $fbId);
 		$pEvent->set("FBNAME", $fbName);
@@ -501,6 +508,7 @@ class TintaSc
 
 		return $new_event_id;
 	}
+	 */
 
 	/**
 	 * Save Image of Event in Parse
@@ -509,6 +517,18 @@ class TintaSc
 	 * @param  string $gFileId  Google Drive File Id
 	 * @return boolean
 	 */
+	public function saveEventImg($eventKey, $gFileId)
+	{
+		$retValue = true;
+
+		$data = array('EVENTID' => $eventKey, 'GIMAGEID' => $gFileId);
+
+		$this->_v3->newObject('TintaImage', $data);
+
+		return $retValue;
+	}
+
+	/*
 	public function saveEventImg($eventKey, $gFileId)
 	{
 
@@ -528,6 +548,7 @@ class TintaSc
 
 		return $retValue;
 	}
+	 */
 
 	/**
 	 * Gets Tinta Data
@@ -535,6 +556,47 @@ class TintaSc
 	 * @param  string $eventKey Parse Event key
 	 * @return array            Json Data
 	 */
+	public function getInfo($eventKey)
+	{
+		// Information
+		$_info = array('FBID' => '',
+					   'FBNAME' => '',
+					   'FBURL' => '',
+					   'FBPICTURE' => '',
+					   'EVENTID'=> '',
+					   'IMAGES' => 0,
+					   'IMAGESLNK' => array());
+
+		$pEvent = $this->_v3->findObject('TintaEvent', $eventKey);
+
+		$_info['FBID'] = $pEvent["FBID"];
+		$_info['FBNAME'] = $pEvent["FBNAME"];
+		$_info['FBURL'] = $this->getProfileUrl($pEvent["FBID"]);
+		$_info['FBPICTURE'] = $this->getProfileImg($pEvent["FBID"], 'normal');
+
+		$_info['EVENTID'] = $pEvent["EVENTID"];
+
+		// Google Drive Images
+		$aQuery = array('EVENTID' => $eventKey);
+
+		$results = $this->_v3->query('TintaImage', $aQuery);
+
+		$total = count($results);
+
+		$_info['IMAGES'] = $total;
+
+		$imgLinks = array();
+
+		foreach ($results as $item) {
+			$imgLinks[] = $this->getGFileUrl($item->GIMAGEID);
+		}
+
+		$_info['IMAGESLNK'] = $imgLinks;
+
+		return $_info;
+	}
+
+	/*
 	public function getInfo($eventKey)
 	{
 		// Information
@@ -584,7 +646,8 @@ class TintaSc
 
 		return $_info;
 	}
-
+	 */
+	
 	/**
 	 * Gets Profile URL of a Facebook Id
 	 * 

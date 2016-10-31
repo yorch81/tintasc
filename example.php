@@ -5,13 +5,15 @@
 
 	$tinta = TintaSc::getInstance();
 
-	$tinta->deleteAllImg();
+	var_dump($tinta->getInfo('5817a5d2409b60a7738b4575'));
+
+	//$tinta->deleteAllImg();
 
 	//var_dump($tinta->getInfo('qB7oCXhpVY'));
 
-	$ini = '2015-07-22T18:00:00-05:00';
+	/*$ini = '2015-07-22T18:00:00-05:00';
 	echo $ini . "\n";
-	echo $tinta->addHours($ini, 1) . "\n";
+	echo $tinta->addHours($ini, 1) . "\n";*/
 
 	/*
 	$event_id = $tinta->addEvent(TintaSc::TATOO, '2015-07-22T18:00:00-05:00', '2015-07-22T22:00:00-05:00');
@@ -27,6 +29,6 @@
 		$tinta->addEventUrl($event_id, $eventKey);
 	}
 	*/
-	var_dump($tinta->getEvents('2015-08-22'));
 	
+	//var_dump($tinta->getEvents('2015-08-22'));
 ?>
