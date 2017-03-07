@@ -179,7 +179,7 @@ class TintaSc
 
 		$myDate = substr_replace($myDate, 'T', 10, 1);
 
-		return $myDate . '-05:00';
+		return $myDate . '-06:00';
 	}
 
 	/**

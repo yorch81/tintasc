@@ -63,7 +63,7 @@ $app->post(
         $tinta = TintaSc::getInstance();
 
         // Add Locale mx
-        $start = $start . '-05:00';
+        $start = $start . '-06:00';
 
         try{
             $event_id = '';
