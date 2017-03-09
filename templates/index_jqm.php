@@ -18,7 +18,8 @@
         <h1>TintaSc App</h1>
       </div>
       
-      <div data-role="main" class="ui-content"><br>
+      <div data-role="main" class="ui-content">
+        <br>
         <fieldset data-role="controlgroup" data-type="horizontal">
           <legend>Tipo de Cita:</legend>
           <label for="radDis">Diseño</label>
@@ -44,8 +45,11 @@
         <label for="txtCom">Comentarios:</label>
         <textarea name="txtCom" id="txtCom" rows="4"></textarea>
         
-        <a id="btn_calendar" href="#" data-role="button" data-icon="calendar-o">Agendar</a>
+        <div data-role="popup" id="pr_popup" class="ui-content">
+          <p id="pr_popmsg">Popup Message</p>
+        </div>
 
+        <a id="btn_calendar" href="#" data-role="button" data-icon="calendar-o">Agendar</a>
        </div>
            
       <div data-role="footer" data-position="fixed">
@@ -75,6 +79,25 @@
     <script type="text/javascript" src="https://yorch81.github.io/js/jtsage/jtsage-datebox.i18n.es-ES.utf8.js"></script>
 
     <script type="text/javascript">
+        function prPopup(){
+        }
+
+        prPopup.check = function() {
+          if ($('#pr_popup').length == 0)
+            return false;
+          else 
+            return true;
+        }
+
+        prPopup.show = function(msg, timeOut = 0) {
+          $("#pr_popmsg").html(msg);
+          $("#pr_popup").popup("open");
+
+          if (timeOut > 0){
+            setTimeout(function() {$("#pr_popup").popup("close");}, timeOut);
+          }
+        }
+
         gotoMap = function (){
           if (confirm("Goto Map?"))
             window.location = "/map";
@@ -109,7 +132,9 @@
 
             $("#btn_calendar").click(function() {
               //$(':mobile-pagecontainer').pagecontainer('change', '#email');
-              $.mobile.changePage( "#pg_message", { role: "dialog" } );
+              //$.mobile.changePage( "#pg_message", { role: "dialog" } );
+              
+              prPopup.show("Su cita se agendó");
             });
 
             $("#cmbProd").change(function() {
