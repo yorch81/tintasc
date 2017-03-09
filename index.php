@@ -22,7 +22,8 @@ $app->get(
     '/',
     function () use ($app, $fb) {
         if ($fb->validate()){
-            $app->render('vw_index.php');
+            //$app->render('vw_index.php');
+            $app->render('index_jqm.php');
         }
         else
             $app->redirect('/fb');

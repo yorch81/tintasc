@@ -5,154 +5,74 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
    
-    <link rel="stylesheet" href="css/jquerymobile/jquery.mobile-1.4.5.min.css">
-    <link rel="stylesheet"  href="css/fajqm/jqm-icon-pack-fa.css" />
-    <link rel="stylesheet"  href="css/jtsage/jtsage-datebox-4.0.0.jqm.min.css" />
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBRxC6Y4f-j6nECyHWigtBATtJyXyha-XU&libraries=adsense&sensor=true&language=es"></script>
+    <link rel="stylesheet" href="https://yorch81.github.io/js/jquery_mobile_1_4_5/jquery.mobile-1.4.5.min.css">
+    <link rel="stylesheet"  href="https://yorch81.github.io/js/jquery_mobile_icons/dist/jqm-icon-pack-fa.css" />
+    <link rel="stylesheet"  href="https://yorch81.github.io/js/jtsage/jtsage-datebox-4.0.0.jqm.min.css" />
     
-    <title>PetRide</title>
+    <title>TintaSc</title>
 </head>
 <body>
 
-    <div data-role="page" id="pageone" data-theme="a">
+    <div data-role="page" id="pageone" data-theme='b'>
       <div data-role="header">
+        <h1>TintaSc App</h1>
       </div>
-
-      <nav data-role="navbar">
-        <ul>
-          <li><a href="#home" data-icon="home">Home</a></li>
-
-          <li><a href="#email" data-rel="dialog" data-icon="grid">Email</a></li>
-          <li><a href="#phonebook" data-rel="dialog" data-icon="search">Phonebook</a></li>
-          <li><a href="#calendar" data-rel="dialog" data-icon="calendar">Calendar</a></li>
-        </ul>
-      </nav>
       
       <div data-role="main" class="ui-content"><br>
-        <p>Goto Index</p>
-      
-        <button id="btnMap" class="ui-btn ui-icon-back ui-btn-icon-left">Goto Map</button>
-
-       
-
-        <br>
-       
-          <label for="cmbProd">Productos</label>
-          <select  id="cmbProd" data-iconpos="right">
-          </select>
+        <fieldset data-role="controlgroup" data-type="horizontal">
+          <legend>Tipo de Cita:</legend>
+          <label for="radDis">Diseño</label>
+          <input type="radio" name="radCita" id="radDis" value="D" checked>
+          <label for="radTat">Tatuaje</label>
+          <input type="radio" name="radCita" id="radTat" value="T"> 
+        </fieldset>
 
         <br/>
-        <label for="txtFecha">Fecha</label>
+        <label for="txtFecha">Iniciando:</label>
         <input id="txtFecha" type="text" data-role="datebox" data-theme='b' data-options='{"mode":"flipbox", "overrideDateFormat": "%Y-%m-%d"}'>
-
-        <label for="txtTime">Hora:</label>
         <input id="txtTime" type="text" data-role="datebox" data-theme='b' data-options='{"mode":"timeflipbox", "overrideTimeFormat": 12, "overrideTimeOutput": "%H:%M:00"}' />
 
-        <label for="txtFecha2">Fecha2</label>
-        <input id="txtFecha2" type="text" data-role="datebox" data-options='{"mode":"datebox", "showInitialValue": "true"}'>
-      </div>
+        <label for="cmbHoras">Horas:</label>
+        <select  id="cmbHoras" data-iconpos="right">
+          <option value="1">1 Hora</option>
+          <option value="2">2 Horas</option>
+          <option value="3">3 Horas</option>
+          <option value="4">4 Horas</option>
+          <option value="5">5 Horas</option>
+        </select>
+
+        <label for="txtCom">Comentarios:</label>
+        <textarea name="txtCom" id="txtCom" rows="4"></textarea>
+        
+        <a id="btn_calendar" href="#" data-role="button" data-icon="calendar-o">Agendar</a>
+
+       </div>
            
       <div data-role="footer" data-position="fixed">
-      <h1>&copy; Copyright 2017 PetRide &reg;</h1>
+        <h1>&copy; Copyright 2017 TintaSc &reg;</h1>
       </div>
     </div> 
 
-    <div data-role="page" id="email">
+    <div data-role="page" id="pg_message" data-theme='b'>
       <div data-role="header">
-      <h1>Email Account</h1>
+        <h1>Header</h1>
       </div>
                   
-        <div data-role="main" class="ui-content">
-        <ul data-role="listview" data-inset="true">
-          <li><a href="#">Inbox<span class="ui-li-count">25</span></a></li>
-          <li><a href="#">Sent<span class="ui-li-count">432</span></a></li>
-          <li><a href="#">Trash<span class="ui-li-count">7</span></a></li>
-        </ul>
-      <a href="#pageone" data-role="button" data-inline="true" data-icon="back">Go Back</a>
-      </div>
-                      
-      <div data-role="footer" data-position="fixed">
-      <h1>Footer Text</h1>
-      </div>
-    </div> 
-
-    <div data-role="page" id="home">
-      <div data-role="header">
-      <h1>Home</h1>
-      </div>
-
       <div data-role="main" class="ui-content">
-      <p>Home Is Where The Heart Is!</p>
-      <a href="#pageone" data-role="button" data-inline="true" data-icon="back">Go Back</a>
+        <p>Message</p>
       </div>
 
       <div data-role="footer" data-position="fixed">
-      <h1>Home</h1>
-      </div>
-    </div>
-
-    <div data-role="page" id="home2">
-      <div data-role="header">
-      <h1>Home</h1>
-      </div>
-
-      <div data-role="main" class="ui-content">
-      <p>Home Is Where The Heart Is!</p>
-      <a href="#pageone" data-role="button" data-inline="true" data-icon="back">Go Back</a>
-      </div>
-
-      <div data-role="footer">
-      <h1>Footer Text</h1>
+        <h1>&copy; Copyright 2017 TintaSc &reg;</h1>
       </div>
     </div> 
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script> 
 
-    <div data-role="page" id="calendar">
-      <div data-role="header">
-      <h1>Calendar</h1>
-      </div>
-
-       <div data-role="main" class="ui-content">
-         <ul data-role="listview" data-inset="true">
-          <li data-role="list-divider">Tuesday, February 10, 2014 <span class="ui-li-count">2</span></li>   
-          <li><a href="#">   
-            <h2>Doctor</h2>
-            <p>Regular check at 12:00</p>
-            <p class="ui-li-aside">Appointment</p></a>
-          </li>
-          <li><a href="#">
-            <h2>Glen Quagmire</h2>
-            <p>The clam at 18:00</p>
-            <p class="ui-li-aside">giggity giggity goo</p></a>
-          </li>
-        </ul>
-        <a href="#pageone" data-role="button" data-inline="true" data-icon="back">Go Back</a>
-      </div>
-    </div>
-      
-    <div data-role="page" id="phonebook">
-      <div data-role="header">
-      <h1>Phonebook</h1>
-      <a href="#pageone" data-role="button" class="ui-btn-right" data-icon="back">Go Back</a>
-      </div>
-
-     <div data-role="main" class="ui-content">
-      
-      <ul data-role="listview" data-autodividers="true" data-inset="true" data-filter="true">
-        <li><a href="#">Adele</a></li>
-        <li><a href="#">Albert</a></li>
-        <li><a href="#">Billy</a></li>
-        <li><a href="#">Calvin</a></li>
-      </ul>
-      </div>
-    </div>
-
-    <script type="text/javascript" src="js/jquery.min.js"></script>
-    <script src="css/jquerymobile/jquery.mobile-1.4.5.min.js"></script>
-    <script type="text/javascript" src="js/Data.js"></script>
-    <script type="text/javascript" src="js/ejs.js"></script>
-    <script type="text/javascript" src="css/jtsage/jtsage-datebox-4.0.0.jqm.min.js"></script>
-    <script type="text/javascript" src="css/jtsage/jtsage-datebox.i18n.es-ES.utf8.js"></script>
+    <script src="https://yorch81.github.io/js/jquery_mobile_1_4_5/jquery.mobile-1.4.5.min.js"></script>
+    <script src="https://yorch81.github.io/js/ejs/ejs_production.js"></script>
+    <script type="text/javascript" src="https://yorch81.github.io/js/jtsage/jtsage-datebox-4.0.0.jqm.min.js"></script>
+    <script type="text/javascript" src="https://yorch81.github.io/js/jtsage/jtsage-datebox.i18n.es-ES.utf8.js"></script>
 
     <script type="text/javascript">
         gotoMap = function (){
@@ -172,7 +92,7 @@
           });*/
         }
 
-        data = new Data('http://pr.localhost', 'VHPg8Mp4RTgnKo0PgRb5tdXhtSS6rYIt3KLYDf5O');
+        //data = new Data('http://pr.localhost', 'VHPg8Mp4RTgnKo0PgRb5tdXhtSS6rYIt3KLYDf5O');
 
         $(document).ready( function() {
             $("#txtId").val(localStorage.pr_id);
@@ -187,13 +107,18 @@
               //$('#cmbProd').selectmenu('refresh');
             });
 
+            $("#btn_calendar").click(function() {
+              //$(':mobile-pagecontainer').pagecontainer('change', '#email');
+              $.mobile.changePage( "#pg_message", { role: "dialog" } );
+            });
+
             $("#cmbProd").change(function() {
               alert("id=" + $("#cmbProd").val());
             });
 
             var jsonData = {'pTable':'TAB_PRODUCTOS', 'pwhere':''};
 
-            data.execute("sp_loadtable", jsonData, 
+            /*data.execute("sp_loadtable", jsonData, 
               function(response, status){
                 if (status == "success"){
                   var html = new EJS({ url: 'js/combo.ejs' }).render(response);
@@ -204,7 +129,7 @@
                 else{
                   console.log(response);
                 }
-              });
+              });*/
 
         });
 
