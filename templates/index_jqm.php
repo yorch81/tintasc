@@ -8,18 +8,38 @@
     <link rel="stylesheet" href="https://yorch81.github.io/js/jquery_mobile_1_4_5/jquery.mobile-1.4.5.min.css">
     <link rel="stylesheet"  href="https://yorch81.github.io/js/jquery_mobile_icons/dist/jqm-icon-pack-fa.css" />
     <link rel="stylesheet"  href="https://yorch81.github.io/js/jtsage/jtsage-datebox-4.0.0.jqm.min.css" />
-    
+    <link href="https://yorch81.github.io/js/dropzone4/min/dropzone.min.css" rel="stylesheet"> 
+
     <title>TintaSc</title>
+
+    <style type="text/css">
+      img {
+          max-width: 25%;
+          max-height: 25%
+      }
+
+      .img_upd {
+          max-width: 85%;
+      }
+
+      .dz {
+        background-color: transparent;
+        border-color: transparent;
+      }
+    </style>
 </head>
 <body>
 
-    <div data-role="page" id="pageone" data-theme='b'>
+    <div data-role="page" id="win_main" data-theme='b'>
       <div data-role="header">
         <h1>TintaSc App</h1>
       </div>
       
       <div data-role="main" class="ui-content">
-        <br>
+        <center>
+          <img id="imgUsr" src="<?php echo $_SESSION['SOCIAL_IMG']; ?>">
+        </center>
+
         <fieldset data-role="controlgroup" data-type="horizontal">
           <legend>Tipo de Cita:</legend>
           <label for="radDis">Diseño</label>
@@ -50,26 +70,38 @@
         </div>
 
         <a id="btn_calendar" href="#" data-role="button" data-icon="calendar-o">Agendar</a>
+        <a id="btn_upload" href="#" data-role="button" data-icon="upload">Subir Diseño</a>
        </div>
            
       <div data-role="footer" data-position="fixed">
-        <h1>&copy; Copyright 2017 TintaSc &reg;</h1>
+        <h1>TintaSc &reg;</h1>
+        <a href="/logout" data-icon="power-off" class="ui-btn-right" rel="external">Salir</a>
       </div>
     </div> 
 
-    <div data-role="page" id="pg_message" data-theme='b'>
+    <div data-role="page" id="win_upload" data-theme='b'>
       <div data-role="header">
-        <h1>Header</h1>
-      </div>
-                  
-      <div data-role="main" class="ui-content">
-        <p>Message</p>
+        <h1>Subir Diseño</h1>
+        <a href="#win_main" data-icon="back" class="ui-btn-right">Atras</a>
       </div>
 
-      <div data-role="footer" data-position="fixed">
-        <h1>&copy; Copyright 2017 TintaSc &reg;</h1>
+      <div data-role="main" class="ui-content">
+        <br/>
+        <center>
+          <label>Toque o Arrastre</label>
+          <form action="/upload" class="dropzone dz" id="dropzonefile">
+            <div class="dz-message">
+              <img src="/img/upload.png" class="img_upd" alt="TintaSc">
+            </div>
+          </form>
+        </center>
+        <br/>
       </div>
-    </div> 
+
+      <div data-role="popup" id="up_popup" class="ui-content">
+        <p id="up_popmsg">Popup Message</p>
+      </div>
+    </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script> 
 
@@ -77,16 +109,11 @@
     <script src="https://yorch81.github.io/js/ejs/ejs_production.js"></script>
     <script type="text/javascript" src="https://yorch81.github.io/js/jtsage/jtsage-datebox-4.0.0.jqm.min.js"></script>
     <script type="text/javascript" src="https://yorch81.github.io/js/jtsage/jtsage-datebox.i18n.es-ES.utf8.js"></script>
+    <script src="https://yorch81.github.io/js/dropzone4/min/dropzone.min.js"></script>
 
     <script type="text/javascript">
+        // Popup Class
         function prPopup(){
-        }
-
-        prPopup.check = function() {
-          if ($('#pr_popup').length == 0)
-            return false;
-          else 
-            return true;
         }
 
         prPopup.show = function(msg, timeOut = 0) {
@@ -98,230 +125,96 @@
           }
         }
 
-        gotoMap = function (){
-          if (confirm("Goto Map?"))
-            window.location = "/map";
+        prPopup.showU = function(msg, timeOut = 0) {
+          $("#up_popmsg").html(msg);
+          $("#up_popup").popup("open");
 
-          //$(':mobile-pagecontainer').pagecontainer('change', '#home');
-          
-          /*
-          $('#txtFecha2').val("2001-01-01");
-
-          $('#txtFecha2').datebox({
-              "mode":"datebox", 
-              "overrideDateFormat": "%Y-%m-%d",
-              "defaultValue": "2001-01-01",
-              "showInitialValue": true
-          });*/
+          if (timeOut > 0){
+            setTimeout(function() {$("#up_popup").popup("close");}, timeOut);
+          }
         }
 
-        //data = new Data('http://pr.localhost', 'VHPg8Mp4RTgnKo0PgRb5tdXhtSS6rYIt3KLYDf5O');
-
+        // Ready
         $(document).ready( function() {
-            $("#txtId").val(localStorage.pr_id);
-            
-            $("#btnMap").click(function() {
-              var dbDate = $("#txtFecha").val() + 'T' + $("#txtTime").val() + '.000';
-              console.log(dbDate);
+            // Hide Upload Button 
+            $("#btn_upload").hide();
 
-              gotoMap();
-              
-              //$('#cmbProd').val(3);
-              //$('#cmbProd').selectmenu('refresh');
+            // DropZone Configuration
+            Dropzone.autoDiscover = false;
+
+            Dropzone.options.dropzonefile = {
+              uploadMultiple : false,
+              maxFiles : 1,
+              acceptedFiles: "image/*",
+              error: function(file, response) {
+                  this.removeAllFiles();
+
+                  prPopup.showU(response, 2000);
+                },
+              init: function() {
+                this.on("success", function(file, response) { 
+                  //this.disable();
+                  this.removeAllFiles();
+
+                  prPopup.showU("Su imagen se subió correctamente", 2000);
+
+                  if (response.length == 0)
+                    console.log("Error on upload file");       
+                });
+              }
+            };
+
+            new Dropzone("#dropzonefile" , Dropzone.options.dropzonefile );
+
+            // upload File or Camera
+            $("#btn_upload").click(function() {
+              $(':mobile-pagecontainer').pagecontainer('change', '#win_upload');
             });
 
+            // Add Calendar
             $("#btn_calendar").click(function() {
-              //$(':mobile-pagecontainer').pagecontainer('change', '#email');
-              //$.mobile.changePage( "#pg_message", { role: "dialog" } );
-              
-              prPopup.show("Su cita se agendó");
+              var retValue = true;
+
+              if ($("#txtFecha").val() == '') {
+                prPopup.show("Debe seleccionar una Fecha");
+                retValue = false;
+              } else if ($("#txtTime").val() == '') {
+                  prPopup.show("Debe seleccionar una Hora");
+                  retValue = false;
+              } else if ($("#txtCom").val() == '') {
+                  prPopup.show("Por Favor agregue comentarios");
+                  retValue = false;
+              } else {
+                  retValue = true;
+              }
+
+              if (retValue) {
+                var start = $("#txtFecha").val() + 'T' + $("#txtTime").val() + '.000';
+                var tipo = 1;
+
+                if ($("#radTat").prop("checked"))
+                  tipo = "2";
+
+                $.post('/calendar', 
+                      {start:start, hours:$("#cmbHoras").val(), type:tipo, comments:$('#txtCom').val()},
+                      function(response) {
+                        if (response == ''){
+                           prPopup.show("Por el momento ese horario se encuentra ocupado, intente con otra Fecha");
+                        }
+                        else{
+                          prPopup.show("Su cita fue agendada, ahora puede subir su diseño !!!");
+
+                          $("#btn_calendar").addClass('ui-disabled');
+                          $("#btn_upload").show();
+                        }
+                  }).error(
+                      function(){
+                          console.log('Error executing Post');
+                      }
+                  );
+              }
             });
-
-            $("#cmbProd").change(function() {
-              alert("id=" + $("#cmbProd").val());
-            });
-
-            var jsonData = {'pTable':'TAB_PRODUCTOS', 'pwhere':''};
-
-            /*data.execute("sp_loadtable", jsonData, 
-              function(response, status){
-                if (status == "success"){
-                  var html = new EJS({ url: 'js/combo.ejs' }).render(response);
-
-                  $('#cmbProd').html(html);
-                  $('#cmbProd').selectmenu('refresh');
-                }
-                else{
-                  console.log(response);
-                }
-              });*/
-
         });
-
-
     </script>
 </body>
-
 </html>
-
-<!--
-  <!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="css/jquerymobile/jquery.mobile-1.4.5.min.css">
-  <link rel="stylesheet"  href="css/fajqm/jqm-icon-pack-fa.css" />
-  <link rel="stylesheet"  href="css/jtsage/jtsage-datebox-4.0.0.jqm.min.css" />
-  <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBRxC6Y4f-j6nECyHWigtBATtJyXyha-XU&libraries=adsense&sensor=true&language=es"></script>
-    
-  <title>PetRide</title>
-</head>
-<body>
-
-  <div data-role="page" id="mnu_page">
-    <div data-role="header">
-      <h1>PetRide Demo</h1>
-    </div>
-
-    <nav data-role="navbar">
-      <ul>
-        <li><a href="#" data-icon="user" id="mnuPerfil">Perfil</a></li>
-        <li><a href="#" data-icon="heart" id="mnuPet">Mascotas</a></li>
-        <li><a href="#" data-icon="globe" id="mnuRide">Paseos</a></li>
-        <li><a href="#" data-icon="wrench" id="mnuHelp">Ayuda</a></li>
-      </ul>
-    </nav>
-
-    <div data-role="main" class="ui-content">
-
-    </div>
-
-    <div data-role="footer" data-position="fixed">
-      <h1>&copy; Copyright 2017 PetRide &reg;</h1>
-    </div>
-  </div>
-
-
-  <div data-role="page" id="mnu_perfil">
-    <div data-role="header">
-      <h1>Perfil</h1>
-      <a href="#mnu_page" data-icon="back" class="ui-btn-right">Atras</a>
-    </div>
-
-    <div data-role="main" class="ui-content">
-      <fieldset data-role="controlgroup" data-type="horizontal">
-        <legend>Registro:</legend>
-        <label for="chkcliente">Cliente</label>
-        <input type="checkbox" name="chkTipo" id="chkcliente" checked>
-        <label for="chkpasea">Paseador</label>
-        <input type="checkbox" name="chkTipo" id="chkpasea">
-      </fieldset>
-
-      <label for="txtNombre">Nombre(s):</label>
-      <input type="text" name="txtNombre" id="txtNombre" placeholder="Nombre" data-clear-btn="true">
-
-      <label for="txtPaterno">Apellido Paterno:</label>
-      <input type="text" name="txtPaterno" id="txtPaterno" placeholder="Apellido Paterno" data-clear-btn="true">
-
-      <label for="txtMaterno">Apellido Materno:</label>
-      <input type="text" name="txtMaterno" id="txtMaterno" placeholder="Apellido Materno" data-clear-btn="true">
-
-      <label for="txtEmail">Correo Electrónico:</label>
-      <input type="email" name="txtEmail" id="txtEmail" placeholder="Correo Electrónico" data-clear-btn="true">
-
-      <fieldset data-role="controlgroup" data-type="horizontal">
-        <legend>Sexo:</legend>
-        <label for="radMasculino">Masculino</label>
-        <input type="radio" name="radSexo" id="radMasculino" value="M" checked>
-        <label for="radFemenino">Femenino</label>
-        <input type="radio" name="radSexo" id="radFemenino" value="F"> 
-      </fieldset>
-
-      <label for="txtDirec">Dirección:</label>
-      <textarea name="txtDirec" id="txtDirec" rows="3"></textarea>
-      
-      <label for="txtCodPos">Código Postal:</label>
-      <input type="text" class="positive-integer" name="txtCodPos" id="txtCodPos" placeholder="Código Postal" data-clear-btn="true" maxlength="5">
-
-      <label for="txtFecha">Fecha de Nacimiento:</label>
-      <input id="txtFecha" type="text" data-role="datebox" data-options='{"mode":"flipbox", "overrideDateFormat": "%Y-%m-%d"}'>
-
-      <label for="txtCel">Celular:</label>
-      <input type="text" class="positive-integer" name="txtCel" id="txtCel" placeholder="Celular" data-clear-btn="true" maxlength="12">
-
-      <button id="btnTest" class="ui-btn ui-icon-back ui-btn-icon-left">Test</button>
-    </div>
-
-    <div data-role="footer" data-position="fixed">
-      <h1>&copy; Copyright 2017 PetRide &reg;</h1>
-    </div>
-  </div>
-
-  
-  <div data-role="page" id="mnu_pets">
-    <div data-role="header">
-      <h1>Mascotas</h1>
-      <a href="#mnu_page" data-icon="back" class="ui-btn-right">Atras</a>
-    </div>
-
-    <div data-role="main" class="ui-content">
-    </div>
-
-    <div data-role="footer" data-position="fixed">
-      <h1>&copy; Copyright 2017 PetRide &reg;</h1>
-    </div>
-  </div>
-
-  
-  <div data-role="page" id="mnu_ride">
-    <div data-role="header">
-      <h1>Paseos</h1>
-      <a href="#mnu_page" data-icon="back" class="ui-btn-right">Atras</a>
-    </div>
-
-    <div data-role="main" class="ui-content">
-    </div>
-
-    <div data-role="footer" data-position="fixed">
-      <h1>&copy; Copyright 2017 PetRide &reg;</h1>
-    </div>
-  </div>
-
-  
-  <script type="text/javascript" src="js/jquery.min.js"></script>
-  <script src="css/jquerymobile/jquery.mobile-1.4.5.min.js"></script>
-  <script type="text/javascript" src="js/Data.js"></script>
-  <script type="text/javascript" src="js/ejs.js"></script>
-  <script type="text/javascript" src="css/jtsage/jtsage-datebox-4.0.0.jqm.min.js"></script>
-  <script type="text/javascript" src="css/jtsage/jtsage-datebox.i18n.es-ES.utf8.js"></script>
-
-  <script type="text/javascript" src="js/prApp.js"></script>
-  <script type="text/javascript" src="js/prEvents.js"></script>
-  <script type="text/javascript" src="js/prCliente.js"></script>
-  <script type="text/javascript" src="js/prCnf.js"></script>
-  <script type="text/javascript" src="js/jquery.numeric.js"></script>
-
-  <script type="text/javascript">
-    // Init Application
-    $(document).ready( function() {
-      $(".positive-integer").numeric({ decimal: false, negative: false });
-      $(".positive-decimal").numeric({ decimal: ".", negative: false });
-
-      $("#btnTest").click(function() {
-        prCliente.saveForm();
-      });
-
-     
-      prCnf.saveKey("1234567890987654321");
-      prCnf.saveItem("SOCIAL_TYPE", "FB");
-      prCnf.saveItem("SOCIAL_ID", '10154755344391897');
-
-      prApp.initialize();
-
-      prEvents.listen();
-    });
-  </script>
-</body>
-</html>
-  -->

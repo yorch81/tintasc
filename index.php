@@ -48,7 +48,7 @@ $app->get(
     function () use ($app, $fb) {
         session_destroy();
         
-        $app->redirect('http://tintaestudio.mx/');
+        $app->redirect('https://www.facebook.com/tinta.estudio/');
     }
 );
 
