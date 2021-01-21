@@ -32,7 +32,7 @@
 
     <div data-role="page" id="win_main" data-theme='b'>
       <div data-role="header">
-        <h1>TintaSc App</h1>
+        <h1>Ink &amp; Thunder</h1>
       </div>
       
       <div data-role="main" class="ui-content">
@@ -74,24 +74,24 @@
        </div>
            
       <div data-role="footer" data-position="fixed">
-        <h1>TintaSc &reg;</h1>
-        <a href="/logout" data-icon="power-off" class="ui-btn-right" rel="external">Salir</a>
+        <h1>Ink &amp; Thunder &reg;</h1>
+        <a href="./logout" data-icon="power-off" class="ui-btn-right" rel="external">Salir</a>
       </div>
     </div> 
 
     <div data-role="page" id="win_upload" data-theme='b'>
       <div data-role="header">
         <h1>Subir Diseño</h1>
-        <a href="#win_main" data-icon="back" class="ui-btn-right">Atras</a>
+        <a href="./logout" data-icon="power-off" class="ui-btn-right" rel="external">Salir</a>
       </div>
 
       <div data-role="main" class="ui-content">
         <br/>
         <center>
           <label>Toque o Arrastre</label>
-          <form action="/upload" class="dropzone dz" id="dropzonefile">
+          <form action="./upload" class="dropzone dz" id="dropzonefile">
             <div class="dz-message">
-              <img src="/img/upload.png" class="img_upd" alt="TintaSc">
+              <img src="./img/upload.png" class="img_upd" alt="TintaSc">
             </div>
           </form>
         </center>
@@ -195,7 +195,7 @@
                 if ($("#radTat").prop("checked"))
                   tipo = "2";
 
-                $.post('/calendar', 
+                $.post('./calendar', 
                       {start:start, hours:$("#cmbHoras").val(), type:tipo, comments:$('#txtCom').val()},
                       function(response) {
                         if (response == ''){

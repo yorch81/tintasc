@@ -15,18 +15,24 @@ if (session_status() == PHP_SESSION_NONE) {
 
 $app = new \Slim\Slim();
 
-$fb = MyLogin::getInstance(MyLogin::FACEBOOK, APP_KEY, APP_SECRET, CALLBACK);
+//$fb = MyLogin::getInstance(MyLogin::FACEBOOK, APP_KEY, APP_SECRET, CALLBACK);
+$fb = NULL;
 
 // TintaSc
 $app->get(
     '/',
     function () use ($app, $fb) {
+        $_SESSION['SOCIAL_IMG'] = "";
+        $app->render('index_jqm.php');
+
+        /*
         if ($fb->validate()){
             //$app->render('vw_index.php');
             $app->render('index_jqm.php');
         }
         else
             $app->redirect('/fb');
+        */
     }
 );
 
@@ -74,10 +80,14 @@ $app->post(
 
                 $event_id = $tinta->addEvent($type, $start, $end, $comments);
 
+                // YoRcH
+                $_SESSION['SOCIAL_ID'] = "100024822322853";
+                $_SESSION['SOCIAL_NAME'] = "yorch";
+
                 $fbId = $_SESSION['SOCIAL_ID'];
                 $fbName = $_SESSION['SOCIAL_NAME'];
 
-                if ($event_id != ''){
+                if ($event_id != '') {
                     $eventKey = $tinta->saveEvent($fbId, $fbName, $event_id);
                     
                     if ($eventKey != '')
@@ -93,10 +103,12 @@ $app->post(
         }
         catch (ResourceNotFoundException $e) {
             $app->response()->status(404);
+            file_put_contents("log.txt", $e->getMessage(), FILE_APPEND);
         } 
         catch (Exception $e) {
             $app->response()->status(400);
             $app->response()->header('X-Status-Reason', $e->getMessage());
+            file_put_contents("log.txt", $e->getMessage(), FILE_APPEND);
         }
     }
 );

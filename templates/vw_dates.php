@@ -16,8 +16,7 @@
     <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>-->
 
-    <link rel="stylesheet" href="/bootstrap-3.3.5/css/bootstrap.min.css">
-    <script src="/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootswatch/3.4.1/darkly/bootstrap.min.css" integrity="sha384-pKJMCXwCXq3HwRBt27cwwSmc0/DAo2BjRxGd7nEESEStk++p6LffHmhX9oqzVDUk" crossorigin="anonymous">
 
 	  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.js"></script>
 	  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
@@ -52,8 +51,8 @@
       	height: 200px; 
       	overflow: visible !important;
       	top: 50% !important; 
-	    left: 50% !important; 
-	    position: fixed;
+        left: 50% !important;
+        position: fixed;
       }
     </style>
     <script type="text/javascript">       

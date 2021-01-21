@@ -1,6 +1,7 @@
 <?php
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
+use Medoo\Medoo;
 
 /**
  * TintaSc 
@@ -97,13 +98,31 @@ class TintaSc
 	 * @var V3Sdk
 	 */
 	private $_v3;
+
+	/**
+	 * MySQL Database
+	 * @var Medoo
+	 */
+	private $_db;
+
 	/**
 	 * Initialize TintaScs
 	 */
 	private function __construct()
-	{
-		// V3ctor WareHouse SDK
-		$this->_v3 = V3Sdk::getInstance(V3_URL, V3_KEY);
+	{		
+		// MySQL
+		$this->_db = new Medoo([
+		    'database_type' => 'mysql',
+		    'database_name' => DB_NAME,
+		    'server' => DB_HOST,
+		    'username' => DB_USER,
+		    'password' => DB_PASSWORD,
+		    'charset' => 'utf8',
+		    'port' => DB_PORT,
+		    'option' => [
+		        PDO::ATTR_CASE => PDO::CASE_NATURAL
+		    ]
+		]);
 
 		// Create Log
 		$logName = 'tintasc_log-' . date("Y-m-d") . '.log';
@@ -468,14 +487,27 @@ class TintaSc
 	}
 
 	/**
-	 * Save Event in Parse
+	 * Save Event in MySQL
 	 * 
 	 * @param  string $fbId    Facebook Id
 	 * @param  string $fbName  Facebook Name
 	 * @param  string $eventId Google Event Id
-	 * @return string          Parse Key
+	 * @return string          Inserted ID
 	 */
 	public function saveEvent($fbId, $fbName, $eventId)
+	{
+		$new_event_id = "";
+
+		$data = array('FBID' => $fbId, 'FBNAME' => $fbName, 'EVENTID' => $eventId);
+
+		$this->_db->insert('TintaEvent', $data);
+
+		$new_event_id = strval($this->_db->id());
+
+		return $new_event_id;
+	}
+
+	public function saveEventV3($fbId, $fbName, $eventId)
 	{
 		$new_event_id = "";
 
@@ -488,8 +520,7 @@ class TintaSc
 		return $new_event_id;
 	}
 
-	/*
-	public function saveEvent($fbId, $fbName, $eventId)
+	public function saveEventParse($fbId, $fbName, $eventId)
 	{
 		$new_event_id = "";
 
@@ -508,16 +539,27 @@ class TintaSc
 
 		return $new_event_id;
 	}
-	 */
 
 	/**
-	 * Save Image of Event in Parse
+	 * Save Image of Event in MySQL
 	 * 
 	 * @param  string $eventKey Parse Event key
 	 * @param  string $gFileId  Google Drive File Id
+	 * 
 	 * @return boolean
 	 */
 	public function saveEventImg($eventKey, $gFileId)
+	{
+		$retValue = true;
+
+		$data = array('EVENTID' => $eventKey, 'GIMAGEID' => $gFileId);
+
+		$this->_db->insert('TintaImage', $data);
+
+		return $retValue;
+	}
+
+	public function saveEventImgV3($eventKey, $gFileId)
 	{
 		$retValue = true;
 
@@ -528,8 +570,7 @@ class TintaSc
 		return $retValue;
 	}
 
-	/*
-	public function saveEventImg($eventKey, $gFileId)
+	public function saveEventImgParse($eventKey, $gFileId)
 	{
 
 		$retValue = true;
@@ -548,15 +589,63 @@ class TintaSc
 
 		return $retValue;
 	}
-	 */
 
 	/**
 	 * Gets Tinta Data
 	 * 
-	 * @param  string $eventKey Parse Event key
+	 * @param  string $eventKey ID Event
 	 * @return array            Json Data
 	 */
 	public function getInfo($eventKey)
+	{
+		// Information
+		$_info = array('FBID' => '',
+					   'FBNAME' => '',
+					   'FBURL' => '',
+					   'FBPICTURE' => '',
+					   'EVENTID'=> '',
+					   'IMAGES' => 0,
+					   'IMAGESLNK' => array());
+
+		$pEvent = $this->_db->select("TintaEvent", [
+			"FBID",
+			"FBNAME",
+			"EVENTID"
+		], [
+			"_id" => $eventKey
+		]);
+
+		$_info['FBID'] = $pEvent[0]["FBID"];
+		$_info['FBNAME'] = $pEvent[0]["FBNAME"];
+		$_info['FBURL'] = $this->getProfileUrl($pEvent[0]["FBID"]);
+		$_info['FBPICTURE'] = $this->getProfileImg($pEvent[0]["FBID"], 'normal');
+
+		$_info['EVENTID'] = $pEvent[0]["EVENTID"];
+
+		// Google Drive Images
+		$results = $this->_db->select("TintaImage", [
+			"EVENTID",
+			"GIMAGEID"
+		], [
+			"EVENTID" => $eventKey
+		]);
+
+		$total = count($results);
+
+		$_info['IMAGES'] = $total;
+
+		$imgLinks = array();
+
+		for ($i=0; $i < $total ; $i++) { 
+			$imgLinks[] = $this->getGFileUrl($results[$i]["GIMAGEID"]);
+		}
+
+		$_info['IMAGESLNK'] = $imgLinks;
+
+		return $_info;
+	}
+
+	public function getInfoV3($eventKey)
 	{
 		// Information
 		$_info = array('FBID' => '',
@@ -596,8 +685,7 @@ class TintaSc
 		return $_info;
 	}
 
-	/*
-	public function getInfo($eventKey)
+	public function getInfoParse($eventKey)
 	{
 		// Information
 		$_info = array('FBID' => '',
@@ -646,7 +734,6 @@ class TintaSc
 
 		return $_info;
 	}
-	 */
 	
 	/**
 	 * Gets Profile URL of a Facebook Id

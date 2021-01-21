@@ -1,6 +1,6 @@
 {
     "name": "yorch/tintasc",
-    "description": "Web Application for Tinta Studio Tatoo",
+    "description": "Web Application for Ink and Thunder Tatoo",
     "homepage": "https://github.com/yorch81/tintasc",
     "type": "project",
     "license": "Apache-2.0",
@@ -19,6 +19,6 @@
         "facebook/php-sdk-v4" : "4.0.23",
         "ruudk/twitter-oauth" : "dev-master",
         "yorch/mylogin" : "dev-master",
-        "yorch/v3sdk" : "dev-master"
+        "catfan/medoo": "^1.7"
     }
 }
