@@ -43,8 +43,7 @@
 	        PDO::ATTR_CASE => PDO::CASE_NATURAL
 	    ]
 	]);
-	 
-	//array('' => $eventKey, '' => $gFileId);
+
 	$data = $db->select("TintaEvent", [
 		"FBID",
 		"FBNAME",

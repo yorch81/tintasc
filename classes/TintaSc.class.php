@@ -56,7 +56,7 @@ class TintaSc
 	/**
 	 * Default Address
 	 */
-	const ADDRESS = 'Zaragoza #311 Sur Zona Centro 87000 Ciudad Victoria Tamaulipas';
+	const ADDRESS = 'Ruperto Martínez #512 A, Zona Centro, Monterrey N.L. México';
 
 	/**
 	 * Application URL
@@ -292,7 +292,7 @@ class TintaSc
 	 * @param string $endDate   End DateTime
 	 * @return boolean
 	 */
-	private function checkAvailability($startDate, $endDate)
+	public function checkAvailability($startDate, $endDate)
 	{
 		$retValue = false;
 
@@ -766,6 +766,11 @@ class TintaSc
 	public function getGFileUrl($gFileId)
 	{
 		return "https://drive.google.com/uc?export=download&id=" . $gFileId;
+	}
+
+	public function log($msg)
+	{
+		$this->_log->addError($msg);
 	}
 }
 ?>

@@ -15,24 +15,18 @@ if (session_status() == PHP_SESSION_NONE) {
 
 $app = new \Slim\Slim();
 
-//$fb = MyLogin::getInstance(MyLogin::FACEBOOK, APP_KEY, APP_SECRET, CALLBACK);
-$fb = NULL;
+$fb = MyLogin::getInstance(MyLogin::FACEBOOK, APP_KEY, APP_SECRET, CALLBACK);
 
 // TintaSc
 $app->get(
     '/',
     function () use ($app, $fb) {
-        $_SESSION['SOCIAL_IMG'] = "";
-        $app->render('index_jqm.php');
-
-        /*
         if ($fb->validate()){
-            //$app->render('vw_index.php');
             $app->render('index_jqm.php');
         }
-        else
-            $app->redirect('/fb');
-        */
+        else {
+            $app->redirect('./fb');
+        }
     }
 );
 
@@ -41,7 +35,7 @@ $app->get(
     '/fb',
     function () use ($app, $fb) {
         if ($fb->login())
-            $app->redirect('/');
+            $app->redirect('./');
         else{
             $app->redirect($fb->getAuthUrl());
         }
@@ -54,7 +48,7 @@ $app->get(
     function () use ($app, $fb) {
         session_destroy();
         
-        $app->redirect('https://www.facebook.com/tinta.estudio/');
+        $app->redirect('https://www.facebook.com/inknthunder.barrio/');
     }
 );
 
@@ -75,26 +69,29 @@ $app->post(
         try{
             $event_id = '';
 
-            if (! isset($_SESSION['EVENT_KEY'])){
+            if (! isset($_SESSION['EVENT_KEY'])) {
                 $end = $tinta->addHours($start,$hours);
 
-                $event_id = $tinta->addEvent($type, $start, $end, $comments);
+                if ($tinta->checkAvailability($start, $end)) {
+                    $event_id = $tinta->addEvent($type, $start, $end, $comments);
 
-                // YoRcH
-                $_SESSION['SOCIAL_ID'] = "100024822322853";
-                $_SESSION['SOCIAL_NAME'] = "yorch";
+                    $fbId = $_SESSION['SOCIAL_ID'];
+                    $fbName = $_SESSION['SOCIAL_NAME'];
 
-                $fbId = $_SESSION['SOCIAL_ID'];
-                $fbName = $_SESSION['SOCIAL_NAME'];
+                    if ($event_id != '') {
+                        $eventKey = $tinta->saveEvent($fbId, $fbName, $event_id);
+                        
+                        if ($eventKey != '')
+                            $_SESSION['EVENT_KEY'] = $eventKey;
 
-                if ($event_id != '') {
-                    $eventKey = $tinta->saveEvent($fbId, $fbName, $event_id);
-                    
-                    if ($eventKey != '')
-                        $_SESSION['EVENT_KEY'] = $eventKey;
-
-                    $tinta->addEventUrl($event_id, $eventKey);
+                        $tinta->addEventUrl($event_id, $eventKey);
+                    }
                 }
+                else
+                    $event_id = 'NOT_AVAILABLE';
+            }
+            else {
+                $event_id = 'CREATED';
             }
 
             $app->response()->status(200);
@@ -103,12 +100,10 @@ $app->post(
         }
         catch (ResourceNotFoundException $e) {
             $app->response()->status(404);
-            file_put_contents("log.txt", $e->getMessage(), FILE_APPEND);
         } 
         catch (Exception $e) {
             $app->response()->status(400);
             $app->response()->header('X-Status-Reason', $e->getMessage());
-            file_put_contents("log.txt", $e->getMessage(), FILE_APPEND);
         }
     }
 );
@@ -121,9 +116,6 @@ $app->post(
             if (isset($_SESSION['EVENT_KEY'])){
                if (!empty($_FILES)){
                     $tempFile = $_FILES['file']['tmp_name'];
-
-                    echo $tempFile;
-                    echo $_SESSION['EVENT_KEY'];
 
                     // Add Google Drive
                     $tinta = TintaSc::getInstance();

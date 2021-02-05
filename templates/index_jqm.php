@@ -5,10 +5,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
    
-    <link rel="stylesheet" href="https://yorch81.github.io/js/jquery_mobile_1_4_5/jquery.mobile-1.4.5.min.css">
-    <link rel="stylesheet"  href="https://yorch81.github.io/js/jquery_mobile_icons/dist/jqm-icon-pack-fa.css" />
-    <link rel="stylesheet"  href="https://yorch81.github.io/js/jtsage/jtsage-datebox-4.0.0.jqm.min.css" />
-    <link href="https://yorch81.github.io/js/dropzone4/min/dropzone.min.css" rel="stylesheet"> 
+    <link rel="stylesheet" href="//yorch81.github.io/js/jquery_mobile_1_4_5/jquery.mobile-1.4.5.min.css">
+    <link rel="stylesheet"  href="//yorch81.github.io/js/jquery_mobile_icons/dist/jqm-icon-pack-fa.css" />
+    <link rel="stylesheet"  href="//yorch81.github.io/js/jtsage/jtsage-datebox-4.0.0.jqm.min.css" />
+    <link href="//yorch81.github.io/js/dropzone4/min/dropzone.min.css" rel="stylesheet"> 
 
     <title>TintaSc</title>
 
@@ -30,9 +30,10 @@
 </head>
 <body>
 
-    <div data-role="page" id="win_main" data-theme='b'>
+    <div data-role="page" id="win_main" data-theme='a'>
       <div data-role="header">
-        <h1>Ink &amp; Thunder</h1>
+        <h1>Agenda tu cita</h1>
+        <a href="./logout" data-icon="power-off" class="ui-btn-right" rel="external">Salir</a>
       </div>
       
       <div data-role="main" class="ui-content">
@@ -42,17 +43,19 @@
 
         <fieldset data-role="controlgroup" data-type="horizontal">
           <legend>Tipo de Cita:</legend>
-          <label for="radDis">Diseño</label>
+          <label for="radDis">Diseño (1 Hr)</label>
           <input type="radio" name="radCita" id="radDis" value="D" checked>
-          <label for="radTat">Tatuaje</label>
+          <label for="radTat">Tatuaje (2 Hr)</label>
           <input type="radio" name="radCita" id="radTat" value="T"> 
         </fieldset>
 
         <br/>
         <label for="txtFecha">Iniciando:</label>
-        <input id="txtFecha" type="text" data-role="datebox" data-theme='b' data-options='{"mode":"flipbox", "overrideDateFormat": "%Y-%m-%d"}'>
-        <input id="txtTime" type="text" data-role="datebox" data-theme='b' data-options='{"mode":"timeflipbox", "overrideTimeFormat": 12, "overrideTimeOutput": "%H:%M:00"}' />
+        <input id="txtFecha" type="text" data-role="datebox" data-theme='a' data-options='{"mode":"flipbox", "overrideDateFormat": "%Y-%m-%d"}'>
+        <input id="txtTime" type="text" data-role="datebox" data-theme='a' data-options='{"mode":"timeflipbox", "overrideTimeFormat": 12, 
+        "overrideTimeOutput": "%H:%M:00"}' />
 
+        <!--
         <label for="cmbHoras">Horas:</label>
         <select  id="cmbHoras" data-iconpos="right">
           <option value="1">1 Hora</option>
@@ -61,34 +64,35 @@
           <option value="4">4 Horas</option>
           <option value="5">5 Horas</option>
         </select>
+        -->
 
         <label for="txtCom">Comentarios:</label>
-        <textarea name="txtCom" id="txtCom" rows="4"></textarea>
+        <textarea name="txtCom" id="txtCom" rows="5"></textarea>
         
         <div data-role="popup" id="pr_popup" class="ui-content">
           <p id="pr_popmsg">Popup Message</p>
         </div>
 
         <a id="btn_calendar" href="#" data-role="button" data-icon="calendar-o">Agendar</a>
-        <a id="btn_upload" href="#" data-role="button" data-icon="upload">Subir Diseño</a>
+        <a id="btn_upload" href="#" data-role="button" data-icon="upload">Sube tus diseños</a>
        </div>
            
       <div data-role="footer" data-position="fixed">
         <h1>Ink &amp; Thunder &reg;</h1>
-        <a href="./logout" data-icon="power-off" class="ui-btn-right" rel="external">Salir</a>
       </div>
     </div> 
 
-    <div data-role="page" id="win_upload" data-theme='b'>
+    <div data-role="page" id="win_upload" data-theme='a'>
       <div data-role="header">
-        <h1>Subir Diseño</h1>
+        <a href="#win_main" data-icon="back" class="ui-btn-left">Atras</a>
+        <h1>Ahora sube tu(s) diseño(s)</h1>
         <a href="./logout" data-icon="power-off" class="ui-btn-right" rel="external">Salir</a>
       </div>
 
       <div data-role="main" class="ui-content">
         <br/>
         <center>
-          <label>Toque o Arrastre</label>
+          <label>Toque o arrastre para subir diseños</label>
           <form action="./upload" class="dropzone dz" id="dropzonefile">
             <div class="dz-message">
               <img src="./img/upload.png" class="img_upd" alt="TintaSc">
@@ -103,13 +107,13 @@
       </div>
     </div>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script> 
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script> 
 
-    <script src="https://yorch81.github.io/js/jquery_mobile_1_4_5/jquery.mobile-1.4.5.min.js"></script>
-    <script src="https://yorch81.github.io/js/ejs/ejs_production.js"></script>
-    <script type="text/javascript" src="https://yorch81.github.io/js/jtsage/jtsage-datebox-4.0.0.jqm.min.js"></script>
-    <script type="text/javascript" src="https://yorch81.github.io/js/jtsage/jtsage-datebox.i18n.es-ES.utf8.js"></script>
-    <script src="https://yorch81.github.io/js/dropzone4/min/dropzone.min.js"></script>
+    <script src="//yorch81.github.io/js/jquery_mobile_1_4_5/jquery.mobile-1.4.5.min.js"></script>
+    <script src="//yorch81.github.io/js/ejs/ejs_production.js"></script>
+    <script type="text/javascript" src="//yorch81.github.io/js/jtsage/jtsage-datebox-4.0.0.jqm.min.js"></script>
+    <script type="text/javascript" src="//yorch81.github.io/js/jtsage/jtsage-datebox.i18n.es-ES.utf8.js"></script>
+    <script src="//yorch81.github.io/js/dropzone4/min/dropzone.min.js"></script>
 
     <script type="text/javascript">
         // Popup Class
@@ -176,10 +180,10 @@
               var retValue = true;
 
               if ($("#txtFecha").val() == '') {
-                prPopup.show("Debe seleccionar una Fecha");
+                prPopup.show("Debe seleccionar una fecha");
                 retValue = false;
               } else if ($("#txtTime").val() == '') {
-                  prPopup.show("Debe seleccionar una Hora");
+                  prPopup.show("Debe seleccionar una hora");
                   retValue = false;
               } else if ($("#txtCom").val() == '') {
                   prPopup.show("Por Favor agregue comentarios");
@@ -190,22 +194,35 @@
 
               if (retValue) {
                 var start = $("#txtFecha").val() + 'T' + $("#txtTime").val() + '.000';
-                var tipo = 1;
 
-                if ($("#radTat").prop("checked"))
+                // Is design
+                var tipo = 1;
+                var hc = 1;
+
+                // Is tattoo
+                if ($("#radTat").prop("checked")) {
                   tipo = "2";
+                  var hc = 2;
+                }
 
                 $.post('./calendar', 
-                      {start:start, hours:$("#cmbHoras").val(), type:tipo, comments:$('#txtCom').val()},
+                      {start:start, hours:hc, type:tipo, comments:$('#txtCom').val()},
                       function(response) {
-                        if (response == ''){
-                           prPopup.show("Por el momento ese horario se encuentra ocupado, intente con otra Fecha");
+                        if (response == 'NOT_AVAILABLE'){
+                          prPopup.show("Por el momento ese horario se encuentra ocupado, intente con otro horario");
                         }
-                        else{
-                          prPopup.show("Su cita fue agendada, ahora puede subir su diseño !!!");
-
+                        else if (response == 'CREATED') {
+                          prPopup.show("Ya ha creado una cita anteriormente, para subir diseños pulse Sube tus diseños");
+                          $("#btn_upload").show();
+                          $("#btn_calendar").addClass('ui-disabled');
+                        }
+                        else {
                           $("#btn_calendar").addClass('ui-disabled');
                           $("#btn_upload").show();
+
+                          $(':mobile-pagecontainer').pagecontainer('change', '#win_upload');
+
+                          prPopup.showU("Tu cita ha sido agendada, ahora puedes subir tus diseños", 2000);
                         }
                   }).error(
                       function(){

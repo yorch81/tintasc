@@ -16,7 +16,7 @@
         "slim/slim": "2.*",
         "google/apiclient": "1.1.4",
         "monolog/monolog": "1.13.1",
-        "facebook/php-sdk-v4" : "4.0.23",
+        "facebook/graph-sdk": "5.7.0",
         "ruudk/twitter-oauth" : "dev-master",
         "yorch/mylogin" : "dev-master",
         "catfan/medoo": "^1.7"
