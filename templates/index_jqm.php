@@ -10,7 +10,8 @@
     <link rel="stylesheet"  href="//yorch81.github.io/js/jtsage/jtsage-datebox-4.0.0.jqm.min.css" />
     <link href="//yorch81.github.io/js/dropzone4/min/dropzone.min.css" rel="stylesheet"> 
 
-    <title>TintaSc</title>
+    <link rel="shortcut icon" href="https://storage.cloud.google.com/yorch81/assets/favicon.png" type="image/ico" />
+    <title>Ink & Thunder Tattoo &reg;</title>
 
     <style type="text/css">
       img {
